@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+$: << File.dirname(__FILE__) + '/../lib'
+
+require 'gutenberg'
+require 'gutenberg/cli'
+
+Gutenberg::CLI.run
