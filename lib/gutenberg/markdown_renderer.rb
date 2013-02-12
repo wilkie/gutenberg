@@ -31,9 +31,9 @@ module Gutenberg
     def paragraph(text)
       match = text.match /^!([^ ]+)\s(.*)/
       if match
-        "<div class='#{match[1]}'><p>#{match[2]}</p></div>\n"
+        "<div class='#{match[1]}'><p>#{match[2]}</p></div>\n\n"
       else
-        "<p>#{text}</p>\n"
+        "<p>#{text}</p>\n\n"
       end
     end
 
@@ -44,9 +44,9 @@ module Gutenberg
       stripped_text = Nokogiri::HTML(text).xpath("//text()").remove.text
       match = text.match /^(.*)--(.*)$/
       if match
-        "<blockquote><p>#{match[1].strip}</p><div><cite>#{match[2].strip}</cite></div></blockquote>\n"
+        "<blockquote><p>#{match[1].strip}</p><div><cite>#{match[2].strip}</cite></div></blockquote>\n\n"
       else
-        "<blockquote><p>#{text}</p></blockquote>\n"
+        "<blockquote><p>#{text}</p></blockquote>\n\n"
       end
     end
 
@@ -100,7 +100,7 @@ module Gutenberg
       end
 
       caption = "<br /><div class='caption'>#{caption}</div>" unless caption == ""
-      "</p><div class='image'>#{img_source}#{caption}</div><p>"
+      "</p><div class='image'>#{img_source}#{caption}</div><p>\n\n"
     end
 
     # Generates HTML for a markdown header.
@@ -122,7 +122,7 @@ module Gutenberg
       end
       @last = new_node
 
-      "<h#{header_level} id='#{new_node.slug}'>#{text}</h#{header_level}>"
+      "<h#{header_level} id='#{new_node.slug}'>#{text}</h#{header_level}>\n\n"
     end
   end
 end
