@@ -1,13 +1,17 @@
 require 'optparse'
 
 require 'gutenberg'
+require 'gutenberg/book'
 
 module Gutenberg
   # The commandline interface to Gutenberg.
   class CLI
     # Usage banner
     BANNER = <<-USAGE
-    Gutenberg - HTML Hypermedia Book Generator
+    gutenberg - HTML Hypermedia Book Generator
+
+    Generate a book
+      gutenberg my_book.yml
     USAGE
 
     class << self
@@ -27,8 +31,6 @@ module Gutenberg
         end
 
         @opts.parse!
-
-        puts @opts
       end
 
       # Executes the command line version of gutenberg.
@@ -40,7 +42,13 @@ module Gutenberg
           exit -1
         end
 
+        if ARGV.empty?
+          puts @opts
+          exit -1
+        end
+
         # Default
+        book = Book.new(:yaml => ARGV[1])
         exit 0
       end
     end
