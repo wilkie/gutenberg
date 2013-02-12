@@ -3,14 +3,24 @@ require 'gutenberg/node'
 module Gutenberg
   require 'redcarpet'
 
+  # Determines how to render markdown tags into HTML.
   class MarkdownRenderer < Redcarpet::Render::HTML
     require 'nokogiri'
     require 'babosa'
     require 'cgi'
 
+    # Returns the root Gutenberg::Node for the chapter contents.
+    # You can traverse this data structure to get a layout of the headers
+    # throughout the chapter.
     attr_reader :outline
+
+    # The title of the chapter as given by the first header found in the
+    # content.
     attr_reader :title
 
+    # Creates a new renderer that can be given to Redcarpet. It expects to
+    # receive a slug to use as a safe anchor and the chapter name in case a
+    # primary header is not used. The name is overriden by a primary header.
     def initialize(slug, name, *args)
       @outline = Node.new(name || "Untitled")
       @last = @outline
@@ -18,12 +28,14 @@ module Gutenberg
       super *args
     end
 
+    # Generates HTML for a markdown codespan.
     def codespan(code)
       # Since codespans are inline with text, let's make sure we never
       # break up a codespan on wordwrap
       "<code>#{CGI::escapeHTML(code).gsub(/\-/, "&#8209;")}</code>"
     end
 
+    # Generates HTML for a markdown code block.
     def block_code(code, language)
       code = CGI::escapeHTML(code);
       new_code = ""
@@ -51,6 +63,7 @@ module Gutenberg
       "<pre><code>#{language}#{new_code}</code></pre>"
     end
 
+    # Generates HTML for a markdown image.
     def image(link, title, alt_text)
       caption = ""
       caption = title
@@ -68,6 +81,7 @@ module Gutenberg
       "</p><div class='image'>#{img_source}#{caption}</div><p>"
     end
 
+    # Generates HTML for a markdown header.
     def header(text, header_level)
       new_node = Node.new text
       if header_level == 1
