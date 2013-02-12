@@ -1,6 +1,4 @@
-require 'minitest/spec'
-require 'turn/autorun'
-
+require_relative 'helper'
 require_relative '../lib/gutenberg/chapter.rb'
 
 describe Gutenberg::Chapter do

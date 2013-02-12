@@ -1,9 +1,4 @@
-require 'minitest/spec'
-require 'turn/autorun'
-
-require 'mocha'
-require "mocha/setup"
-
+require_relative 'helper'
 require_relative '../lib/gutenberg/book.rb'
 
 describe Gutenberg::Book do
