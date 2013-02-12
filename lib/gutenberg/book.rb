@@ -5,7 +5,12 @@ module Gutenberg
 
     # The title of the book
     attr_reader :title
+
+    # The authors of the book
     attr_reader :authors
+
+    # The preferred style to use to generate it
+    attr_reader :style
 
     # Will create the book class and organize all metadata.
     def initialize(options = {})

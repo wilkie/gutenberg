@@ -16,4 +16,9 @@ describe Gutenberg::Book do
     Gutenberg::Book.new({:authors => ["wilkie"]})
       .authors.first.must_equal("wilkie")
   end
+
+  it "can be created with style" do
+    Gutenberg::Book.new({:style => "really_pretty"})
+      .style.must_equal("really_pretty")
+  end
 end
