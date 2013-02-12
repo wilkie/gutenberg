@@ -1,3 +1,5 @@
+require 'gutenberg/chapter'
+
 module Gutenberg
   # The collection of resources that make up the book.
   class Book
@@ -35,9 +37,9 @@ module Gutenberg
         options[:chapters] = options[:chapters] || data["chapters"]
       end
 
-      @title    = options[:title]    || "Untitled"
-      @authors  = options[:authors]  || ["anonymous"]
-      @style    = options[:style]    || "basic"
+      @title    = options[:title]   || "Untitled"
+      @authors  = options[:authors] || ["anonymous"]
+      @style    = options[:style]   || "basic"
 
       chapters = options[:chapters] || []
 
