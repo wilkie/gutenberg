@@ -19,5 +19,6 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency "tilt"      # haml/etc
   gem.add_dependency "redcarpet" # markdown
+  gem.add_dependency "nokogiri"  # html parsing, html striping
   gem.add_dependency "babosa"    # slug generation
 end

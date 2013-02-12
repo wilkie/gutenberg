@@ -2,8 +2,12 @@ module Gutenberg
   require 'redcarpet'
 
   class MarkdownRenderer < Redcarpet::Render::HTML
-    attr_accessor :outline
-    attr_accessor :title
+    require 'nokogiri'
+    require 'babosa'
+    require 'cgi'
+
+    attr_reader :outline
+    attr_reader :title
 
     class Node
       attr_accessor :child
@@ -29,18 +33,20 @@ module Gutenberg
       end
 
       def slug
-        @text.gsub(/\W/, "_").downcase
+        @text.to_slug.to_s
       end
     end
 
-    def initialize(slug, *args)
-      @outline = Node.new :root
+    def initialize(slug, name, *args)
+      @outline = Node.new(name || "Untitled")
       @last = @outline
       @slug = slug
       super *args
     end
 
     def codespan(code)
+      # Since codespans are inline with text, let's make sure we never
+      # break up a codespan on wordwrap
       "<code>#{CGI::escapeHTML(code).gsub(/\-/, "&#8209;")}</code>"
     end
 
@@ -72,20 +78,16 @@ module Gutenberg
     end
 
     def image(link, title, alt_text)
-      unless link.match /^http|^\//
-        link = "/images/#{@slug}/#{link}"
-      end
-
       caption = ""
-      caption = alt_text unless alt_text.start_with? "!"
-      alt_text = Nokogiri::HTML(alt_text).xpath("//text()").remove
+      caption = title
+      title = Nokogiri::HTML(title).xpath("//text()").remove
 
       img_source = "<img src='#{link}' title='#{title}' alt='#{alt_text}' />"
 
       if link.match "http[s]?://(www.)?youtube.com"
         # embed the youtube link
         youtube_hash = link.match("youtube.com/.*=(.*)$")[1]
-        img_source = "<div class='youtube'><div class='youtube_fixture'><img src='/images/youtube_placeholder.png' /><iframe class='youtube_frame' src='http://www.youtube.com/embed/#{youtube_hash}'></iframe></div></div>"
+        img_source = "<div class='youtube'><div class='youtube_fixture'><img src='/images/youtube_placeholder.png' /><iframe class='youtube_frame' longdesc='#{alt_text}' src='http://www.youtube.com/embed/#{youtube_hash}'>#{alt_text}</iframe></div></div>"
       end
 
       caption = "<br /><div class='caption'>#{caption}</div>" unless caption == ""
@@ -93,12 +95,12 @@ module Gutenberg
     end
 
     def header(text, header_level)
+      new_node = Node.new text
       if header_level == 1
         @title = @title || text.strip
-      end
-
-      new_node = Node.new text
-      if header_level == @last.level
+        @outline.text = text
+        new_node = @outline
+      elsif header_level == @last.level
         new_node.parent = @last.parent
         @last.sibling = new_node
       elsif header_level > @last.level

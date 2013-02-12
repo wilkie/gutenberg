@@ -34,7 +34,7 @@ module Gutenberg
       if options[:markdown_file]
         options[:slug] = options[:slug] || options[:markdown_file].gsub(/.md$/, "").to_slug.to_s
 
-        @renderer = Gutenberg::MarkdownRenderer.new(options[:slug])
+        @renderer = Gutenberg::MarkdownRenderer.new(options[:slug], options[:title])
         @markdown = Redcarpet::Markdown.new(@renderer, :fenced_code_blocks => true)
         @format = :markdown
 
