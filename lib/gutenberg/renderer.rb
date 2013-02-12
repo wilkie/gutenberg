@@ -3,6 +3,7 @@ module Gutenberg
 
   class Renderer < Redcarpet::Render::HTML
     attr_accessor :outline
+    attr_accessor :title
 
     class Node
       attr_accessor :child
@@ -92,6 +93,10 @@ module Gutenberg
     end
 
     def header(text, header_level)
+      if header_level == 1
+        @title = @title || text.strip
+      end
+
       new_node = Node.new text
       if header_level == @last.level
         new_node.parent = @last.parent

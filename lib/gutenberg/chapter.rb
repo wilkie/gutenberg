@@ -18,6 +18,9 @@ module Gutenberg
     # The content of this chapter in a raw format
     attr_accessor :content
 
+    # The content of this chapter rendered in html
+    attr_accessor :html
+
     # Creates a new representation of a Chapter where options may be specified:
     # :markdown_file - use the given file for the chapter content
     #
@@ -26,11 +29,14 @@ module Gutenberg
     # :authors       - an array of authors (default: [])
     # :slug          - the slug to identify this chapter (default: inferred from title)
     def initialize(options = {})
+      @format = options[:format] || :text
+
       if options[:markdown_file]
         options[:slug] = options[:slug] || options[:markdown_file].gsub(/.md$/, "").to_slug.to_s
 
-        renderer = Gutenberg::Renderer.new(options[:slug])
-        Redcarpet::Markdown.new(renderer, :fenced_code_blocks => true)
+        @renderer = Gutenberg::Renderer.new(options[:slug])
+        @markdown = Redcarpet::Markdown.new(@renderer, :fenced_code_blocks => true)
+        @format = :markdown
 
         # Will throw on error
         options[:content] = options[:content] || File.read(options[:markdown_file])
@@ -42,15 +48,27 @@ module Gutenberg
       match = options[:content].match(/^---$(.*?)^---$(.*)/m)
 
       unless match.nil?
-        meta_data = match[1]
-        options[:content] = match[2]
+        meta_data = match[1].strip
+        options[:content] = match[2].strip
 
         meta_data = YAML.load(meta_data)
 
         options[:title] = options[:title] || meta_data["title"]
-        options[:author] = options[:author] || meta_data["authors"]
+        options[:authors] = options[:authors] || meta_data["authors"]
         options[:scripts] = options[:scripts] || meta_data["scripts"]
         options[:summary] = options[:summary] || meta_data["summary"]
+      end
+
+      case @format
+      when :markdown
+        @html = @markdown.render(options[:content])
+
+        # title can be inferred from markdown
+        options[:title] = options[:title] || @renderer.title
+      when :html
+        @html = @content
+      else
+        @html = "<pre>#{@content}</pre>"
       end
 
       @title   = options[:title] || "Untitled"

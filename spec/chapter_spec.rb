@@ -39,10 +39,90 @@ describe Gutenberg::Chapter do
     Gutenberg::Chapter.new.slug.must_equal("chapter")
   end
 
-  it "generates a slug based on the filename of the markdown" do
-    Redcarpet::Markdown.stubs(:new).returns(nil)
-    File.stubs(:read).returns("")
-    Gutenberg::Chapter.new(:markdown_file => "foo.md").slug.must_equal("foo")
+  describe "when passed a markdown file" do
+    before do
+      # mock out a renderer that, by default, renders any markdown as <foo>
+      @renderer = mock('renderer')
+      @renderer.stubs(:render).returns("<foo>")
+      Redcarpet::Markdown.stubs(:new).returns(@renderer)
+
+      # any file reads will give you a blank string
+      File.stubs(:read).returns("")
+
+      # default to yaml not parsing anything
+      YAML.stubs(:load).returns({})
+    end
+
+    it "generates a slug based on the filename of the markdown" do
+      Gutenberg::Chapter.new(:markdown_file => "foo.md").slug.must_equal("foo")
+    end
+
+    it "generates html from markdown" do
+      Gutenberg::Chapter.new(:markdown_file => "foo.md").html.must_equal("<foo>")
+    end
+
+    it "exposes markdown content" do
+      File.stubs(:read).returns("blah")
+      Gutenberg::Chapter.new(:markdown_file => "foo.md").content.must_equal("blah")
+    end
+
+    it "captures yaml inside markdown content" do
+      File.stubs(:read).returns("---\ntitle: foo\n---\nblah")
+      YAML.expects(:load).with("title: foo").returns({"title" => "foo"})
+      Gutenberg::Chapter.new(:markdown_file => "foo.md")
+    end
+
+    it "reads title from yaml inside markdown content" do
+      File.stubs(:read).returns("---\ntitle: foo\n---\nblah")
+      YAML.stubs(:load).with("title: foo").returns({"title" => "foo"})
+      Gutenberg::Chapter.new(:markdown_file => "foo.md").title.must_equal("foo")
+    end
+
+    it "reads authors from yaml inside markdown content" do
+      File.stubs(:read).returns("---\nauthors: ['foo']\n---\nblah")
+      YAML.stubs(:load).with("authors: ['foo']").returns({"authors" => ["foo"]})
+      Gutenberg::Chapter.new(:markdown_file => "foo.md")
+        .authors.must_equal(["foo"])
+    end
+
+    it "removes yaml information in exposed content" do
+      File.stubs(:read).returns("---\ntitle: foo\n---\nblah")
+      Gutenberg::Chapter.new(:markdown_file => "foo.md").content.must_equal("blah")
+    end
+
+    it "infers the title from the markdown" do
+      File.stubs(:read).returns("---\nauthors: ['foo']\n---\nblah")
+      Gutenberg::Renderer.any_instance.expects(:title).returns("hello")
+      Gutenberg::Chapter.new(:markdown_file => "foo.md").title.must_equal("hello")
+    end
+
+    it "can override the title in the yaml" do
+      File.stubs(:read).returns("---\ntitle: foo\n---\nblah")
+      YAML.stubs(:load).with("title: foo").returns({"title" => "foo"})
+      Gutenberg::Chapter.new(:markdown_file => "foo.md",
+                             :title => "moo").title.must_equal("moo")
+    end
+
+    it "can override the title inferred by the markdown with yaml" do
+      File.stubs(:read).returns("---\ntitle: foo\n---\nblah")
+      YAML.stubs(:load).with("title: foo").returns({"title" => "foo"})
+      Gutenberg::Renderer.any_instance.stubs(:title).returns("hello")
+      Gutenberg::Chapter.new(:markdown_file => "foo.md").title.must_equal("foo")
+    end
+
+    it "can override the title inferred by the markdown with parameter" do
+      File.stubs(:read).returns("---\ntitle: foo\n---\nblah")
+      YAML.stubs(:load).with("title: foo").returns({"title" => "foo"})
+      Gutenberg::Renderer.any_instance.stubs(:title).returns("hello")
+      Gutenberg::Chapter.new(:markdown_file => "foo.md",
+                             :title => "moo").title.must_equal("moo")
+    end
+
+    it "parses the remaining content as markdown after the yaml" do
+      File.stubs(:read).returns("---\ntitle: foo\n---\nblah")
+      @renderer.expects(:render).with("blah")
+      Gutenberg::Chapter.new(:markdown_file => "foo.md")
+    end
   end
 end
 
