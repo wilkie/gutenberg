@@ -17,12 +17,20 @@ describe Gutenberg::Chapter do
       .authors.first.must_equal("wilkie")
   end
 
+  it "can be created with a slug" do
+    Gutenberg::Chapter.new({:slug => "my_slug"}).slug.must_equal("my_slug")
+  end
+
   it "has a reasonable default title" do
     Gutenberg::Chapter.new.title.must_equal("Untitled")
   end
 
   it "has an empty list of authors by default" do
     Gutenberg::Chapter.new.authors.must_equal([])
+  end
+
+  it "has a general slug by default" do
+    Gutenberg::Chapter.new.slug.must_equal("chapter")
   end
 end
 
