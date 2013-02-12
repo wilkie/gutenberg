@@ -6,7 +6,6 @@ module Gutenberg
   # Determines how to render markdown tags into HTML.
   class MarkdownRenderer < Redcarpet::Render::HTML
     require 'nokogiri'
-    require 'babosa'
     require 'cgi'
 
     # Returns the root Gutenberg::Node for the chapter contents.

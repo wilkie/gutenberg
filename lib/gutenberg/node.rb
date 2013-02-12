@@ -1,6 +1,8 @@
 module Gutenberg
   # Represents a header or subheader in chapter content.
   class Node
+    require 'babosa'
+
     # The first child of this node.
     attr_accessor :child
 
@@ -35,7 +37,7 @@ module Gutenberg
 
     # Determines a slug version of the header text.
     def slug
-      @text.to_slug.to_s
+      @text.to_slug.normalize.to_s
     end
   end
 end
