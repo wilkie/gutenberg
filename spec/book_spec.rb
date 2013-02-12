@@ -11,4 +11,9 @@ describe Gutenberg::Book do
   it "can be created with a title" do
     Gutenberg::Book.new({:title => "My Book"}).title.must_equal("My Book")
   end
+
+  it "can be created with an author" do
+    Gutenberg::Book.new({:authors => ["wilkie"]})
+      .authors.first.must_equal("wilkie")
+  end
 end

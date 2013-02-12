@@ -5,6 +5,7 @@ module Gutenberg
 
     # The title of the book
     attr_reader :title
+    attr_reader :authors
 
     # Will create the book class and organize all metadata.
     def initialize(options = {})
