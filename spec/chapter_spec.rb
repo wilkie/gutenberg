@@ -92,7 +92,7 @@ describe Gutenberg::Chapter do
 
     it "infers the title from the markdown" do
       File.stubs(:read).returns("---\nauthors: ['foo']\n---\nblah")
-      Gutenberg::Renderer.any_instance.expects(:title).returns("hello")
+      Gutenberg::MarkdownRenderer.any_instance.expects(:title).returns("hello")
       Gutenberg::Chapter.new(:markdown_file => "foo.md").title.must_equal("hello")
     end
 
@@ -106,14 +106,14 @@ describe Gutenberg::Chapter do
     it "can override the title inferred by the markdown with yaml" do
       File.stubs(:read).returns("---\ntitle: foo\n---\nblah")
       YAML.stubs(:load).with("title: foo").returns({"title" => "foo"})
-      Gutenberg::Renderer.any_instance.stubs(:title).returns("hello")
+      Gutenberg::MarkdownRenderer.any_instance.stubs(:title).returns("hello")
       Gutenberg::Chapter.new(:markdown_file => "foo.md").title.must_equal("foo")
     end
 
     it "can override the title inferred by the markdown with parameter" do
       File.stubs(:read).returns("---\ntitle: foo\n---\nblah")
       YAML.stubs(:load).with("title: foo").returns({"title" => "foo"})
-      Gutenberg::Renderer.any_instance.stubs(:title).returns("hello")
+      Gutenberg::MarkdownRenderer.any_instance.stubs(:title).returns("hello")
       Gutenberg::Chapter.new(:markdown_file => "foo.md",
                              :title => "moo").title.must_equal("moo")
     end

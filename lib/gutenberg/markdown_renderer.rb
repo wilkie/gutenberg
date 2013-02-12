@@ -1,7 +1,7 @@
 module Gutenberg
   require 'redcarpet'
 
-  class Renderer < Redcarpet::Render::HTML
+  class MarkdownRenderer < Redcarpet::Render::HTML
     attr_accessor :outline
     attr_accessor :title
 
