@@ -17,6 +17,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
-  gem.add_dependency "tilt"
-  gem.add_dependency "redcarpet"
+  gem.add_dependency "tilt"      # haml/etc
+  gem.add_dependency "redcarpet" # markdown
+  gem.add_dependency "babosa"    # slug generation
 end
