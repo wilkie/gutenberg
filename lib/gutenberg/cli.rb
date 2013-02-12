@@ -2,6 +2,7 @@ require 'optparse'
 
 require 'gutenberg'
 require 'gutenberg/book'
+require 'gutenberg/generator'
 
 module Gutenberg
   # The commandline interface to Gutenberg.
@@ -49,7 +50,8 @@ module Gutenberg
 
         # Default
         book = Book.new(:yaml => ARGV[0])
-        puts book.chapters.first.html
+        gen  = Generator.new("basic")
+        puts gen.render(book)
         exit 0
       end
     end
