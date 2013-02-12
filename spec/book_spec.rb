@@ -66,4 +66,19 @@ describe Gutenberg::Book do
     YAML.stubs(:load_file).returns({"title" => "foo"})
     Gutenberg::Book.new({:yaml => "test.yaml"}).style.must_equal("basic")
   end
+
+  it "can override the title that is specified in yaml" do
+    YAML.stubs(:load_file).returns({"title" => "foo"})
+    Gutenberg::Book.new({:yaml => "test.yaml", :title => "bar"}).title.must_equal("bar")
+  end
+
+  it "can override the authors that are specified in yaml" do
+    YAML.stubs(:load_file).returns({"authors" => ["foo"]})
+    Gutenberg::Book.new({:yaml => "test.yaml", :authors => ["bar"]}).authors.must_equal(["bar"])
+  end
+
+  it "can override the style that are specified in yaml" do
+    YAML.stubs(:load_file).returns({"style" => "foo"})
+    Gutenberg::Book.new({:yaml => "test.yaml", :style => "bar"}).style.must_equal("bar")
+  end
 end
