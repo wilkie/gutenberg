@@ -6,11 +6,25 @@ module Gutenberg
     require 'redcarpet'
     require 'babosa'
 
+    # The title of the chapter
     attr_accessor :title
+
+    # The list of authors responsible for this chapter
     attr_accessor :authors
+
+    # The friendly identifier for this chapter
     attr_accessor :slug
+
+    # The content of this chapter in a raw format
     attr_accessor :content
 
+    # Creates a new representation of a Chapter where options may be specified:
+    # :markdown_file - use the given file for the chapter content
+    #
+    # :title         - the title of the chapter (default: "Untitled")
+    # :content       - the content for the chapter (default: "")
+    # :authors       - an array of authors (default: [])
+    # :slug          - the slug to identify this chapter (default: inferred from title)
     def initialize(options = {})
       if options[:markdown_file]
         options[:slug] = options[:slug] || options[:markdown_file].gsub(/.md$/, "").to_slug.to_s

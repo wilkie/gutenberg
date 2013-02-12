@@ -15,7 +15,15 @@ module Gutenberg
     # The chapters gathered in this book
     attr_reader :chapters
 
-    # Will create the book class and organize all metadata.
+    # Will create the book class and organize all metadata. Can be passed the
+    # following options:
+    # :yaml    - the filename of YAML that describes the book
+    #
+    # :title   - the title of the book (default: "Untitled")
+    # :authors - an array of authors (default: ["anonymous"])
+    # :style   - the styling to use upon generation (default: "basic")
+    #
+    # :chapters - an array of chapter files (default: [])
     def initialize(options = {})
       if options[:yaml]
         data = YAML::load_file(options[:yaml])
