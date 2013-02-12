@@ -1,6 +1,9 @@
 require 'minitest/spec'
 require 'turn/autorun'
 
+require 'mocha'
+require "mocha/setup"
+
 require_relative '../lib/gutenberg/book.rb'
 
 describe Gutenberg::Book do
@@ -20,5 +23,20 @@ describe Gutenberg::Book do
   it "can be created with style" do
     Gutenberg::Book.new({:style => "really_pretty"})
       .style.must_equal("really_pretty")
+  end
+
+  it "title can be pulled from yaml" do
+    YAML.stubs(:load_file).returns({"title" => "Book Title"})
+    Gutenberg::Book.new({:yaml => 'test.yaml'}).title.must_equal("Book Title")
+  end
+
+  it "authors can be pulled from yaml" do
+    YAML.stubs(:load_file).returns({"authors" => ["wilkie", "smith"]})
+    Gutenberg::Book.new({:yaml => 'test.yaml'}).authors.must_equal(["wilkie", "smith"])
+  end
+
+  it "style can be pulled from yaml" do
+    YAML.stubs(:load_file).returns({"style" => "pretty"})
+    Gutenberg::Book.new({:yaml => 'test.yaml'}).style.must_equal("pretty")
   end
 end

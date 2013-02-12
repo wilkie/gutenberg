@@ -6,4 +6,5 @@ gemspec
 group :test do
   gem "ansi"
   gem "turn"
+  gem "mocha" # stubs
 end
