@@ -4,6 +4,34 @@ module Gutenberg
   class Renderer < Redcarpet::Render::HTML
     attr_accessor :outline
 
+    class Node
+      attr_accessor :child
+      attr_accessor :sibling
+      attr_accessor :parent
+      attr_accessor :text
+
+      def initialize text, parent=nil, sibling=nil, child=nil
+        @parent = parent
+        @text = text
+        @sibling = sibling
+        @child = child
+      end
+
+      def level
+        level = 1
+        current = @parent
+        until current.nil? do
+          current = current.parent
+          level = level + 1
+        end
+        level
+      end
+
+      def slug
+        @text.gsub(/\W/, "_").downcase
+      end
+    end
+
     def initialize(slug, *args)
       @outline = Node.new :root
       @last = @outline

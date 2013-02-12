@@ -12,19 +12,31 @@ module Gutenberg
     # The preferred style to use to generate it
     attr_reader :style
 
+    # The chapters gathered in this book
+    attr_reader :chapters
+
     # Will create the book class and organize all metadata.
     def initialize(options = {})
       if options[:yaml]
         data = YAML::load_file(options[:yaml])
 
-        options[:title]   = options[:title]   || data["title"]
-        options[:authors] = options[:authors] || data["authors"]
-        options[:style]   = options[:style]   || data["style"]
+        options[:title]    = options[:title]    || data["title"]
+        options[:authors]  = options[:authors]  || data["authors"]
+        options[:style]    = options[:style]    || data["style"]
+
+        options[:chapters] = options[:chapters] || data["chapters"]
       end
 
-      @title   = options[:title]   || "Untitled"
-      @authors = options[:authors] || ["anonymous"]
-      @style   = options[:style]   || "basic"
+      @title    = options[:title]    || "Untitled"
+      @authors  = options[:authors]  || ["anonymous"]
+      @style    = options[:style]    || "basic"
+
+      chapters = options[:chapters] || []
+
+      @chapters = []
+      chapters.each do |c|
+        @chapters << Chapter.new(:markdown_file => c)
+      end
     end
   end
 end

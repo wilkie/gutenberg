@@ -21,7 +21,7 @@ describe Gutenberg::Chapter do
     Gutenberg::Chapter.new.title.must_equal("Untitled")
   end
 
-  it "has a empty list of authors by default" do
+  it "has an empty list of authors by default" do
     Gutenberg::Chapter.new.authors.must_equal([])
   end
 end
