@@ -37,6 +37,19 @@ module Gutenberg
       end
     end
 
+    # Generates HTML for markdown blockquotes.
+    def block_quote(text)
+      # un <p> tag the blockquote because seriously now
+      text = text.match(/^<p>(.*)<\/p>$/)[1] if text.start_with? "<p>"
+      stripped_text = Nokogiri::HTML(text).xpath("//text()").remove.text
+      match = text.match /^(.*)--(.*)$/
+      if match
+        "<blockquote><p>#{match[1].strip}</p><div><cite>#{match[2].strip}</cite></div></blockquote>\n"
+      else
+        "<blockquote><p>#{text}</p></blockquote>\n"
+      end
+    end
+
     # Generates HTML for a markdown codespan.
     def codespan(code)
       # Since codespans are inline with text, let's make sure we never

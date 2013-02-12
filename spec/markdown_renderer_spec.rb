@@ -20,7 +20,19 @@ describe Gutenberg::MarkdownRenderer do
     end
 
     it "generates a div tag when paragraph starts with !" do
-      @renderer.paragraph("!note hello").must_match /<div.*?class=['"]note['"][^>]*><p[^>]*>hello<\/p><\/div>/
+      @renderer.paragraph("!note hello")
+        .must_match /<div.*?class=['"]note['"][^>]*><p[^>]*>hello<\/p><\/div>/
+    end
+  end
+
+  describe "#block_quote" do
+    it "generates a blockquote tag" do
+      @renderer.block_quote("hello").must_match /<blockquote[^>]*><p>hello<\/p><\/blockquote>/
+    end
+
+    it "generates a div and cite inside the blockquote tag when citation is found" do
+      @renderer.block_quote("hello -- foo bar")
+        .must_match /<blockquote[^>]*><p>hello<\/p><div><cite>foo bar<\/cite><\/div><\/blockquote>/
     end
   end
 
