@@ -27,6 +27,16 @@ module Gutenberg
       super *args
     end
 
+    # Generates HTML for a markdown paragraph.
+    def paragraph(text)
+      match = text.match /^!([^ ]+)\s(.*)/
+      if match
+        "<div class='#{match[1]}'><p>#{match[2]}</p></div>\n"
+      else
+        "<p>#{text}</p>\n"
+      end
+    end
+
     # Generates HTML for a markdown codespan.
     def codespan(code)
       # Since codespans are inline with text, let's make sure we never

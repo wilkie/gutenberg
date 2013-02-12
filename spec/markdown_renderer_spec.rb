@@ -14,6 +14,16 @@ describe Gutenberg::MarkdownRenderer do
     end
   end
 
+  describe "#paragraph" do
+    it "generates a p tag" do
+      @renderer.paragraph("hello").must_match /<p[^>]*>hello<\/p>/
+    end
+
+    it "generates a div tag when paragraph starts with !" do
+      @renderer.paragraph("!note hello").must_match /<div.*?class=['"]note['"][^>]*><p[^>]*>hello<\/p><\/div>/
+    end
+  end
+
   describe "#outline" do
     it "returns a default node for the content with the given name" do
       @renderer.outline.text = "Slug"

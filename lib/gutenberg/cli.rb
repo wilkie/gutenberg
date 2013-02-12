@@ -49,6 +49,7 @@ module Gutenberg
 
         # Default
         book = Book.new(:yaml => ARGV[0])
+        puts book.chapters.first.html
         exit 0
       end
     end
