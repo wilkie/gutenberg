@@ -1,5 +1,5 @@
 require 'minitest/spec'
-require 'minitest/autorun'
+require 'turn/autorun'
 
 require_relative '../lib/gutenberg/book.rb'
 
