@@ -48,7 +48,7 @@ module Gutenberg
         end
 
         # Default
-        book = Book.new(:yaml => ARGV[1])
+        book = Book.new(:yaml => ARGV[0])
         exit 0
       end
     end
