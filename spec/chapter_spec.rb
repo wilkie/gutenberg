@@ -42,6 +42,10 @@ describe Gutenberg::Chapter do
   describe "when passed a markdown file" do
     before do
       # mock out a renderer that, by default, renders any markdown as <foo>
+      @md_renderer = mock('md_renderer')
+      @md_renderer.stubs(:title).returns("")
+      Gutenberg::MarkdownRenderer.stubs(:new).returns(@md_renderer)
+
       @renderer = mock('renderer')
       @renderer.stubs(:render).returns("<foo>")
       Redcarpet::Markdown.stubs(:new).returns(@renderer)
@@ -51,6 +55,17 @@ describe Gutenberg::Chapter do
 
       # default to yaml not parsing anything
       YAML.stubs(:load).returns({})
+    end
+
+    it "makes use of the custom renderer" do
+      Gutenberg::MarkdownRenderer.expects(:new).returns(@md_renderer)
+      Gutenberg::Chapter.new(:markdown_file => "foo.md")
+    end
+
+    it "passes the custom renderer a slug and a language as strings" do
+      Gutenberg::MarkdownRenderer.expects(:new)
+        .with(instance_of(String), anything, instance_of(String)).returns(@md_renderer)
+      Gutenberg::Chapter.new(:markdown_file => "foo.md")
     end
 
     it "generates a slug based on the filename of the markdown" do
@@ -92,7 +107,9 @@ describe Gutenberg::Chapter do
 
     it "infers the title from the markdown" do
       File.stubs(:read).returns("---\nauthors: ['foo']\n---\nblah")
-      Gutenberg::MarkdownRenderer.any_instance.expects(:title).returns("hello")
+      md_renderer = mock('md_renderer')
+      md_renderer.stubs(:title).returns("hello")
+      Gutenberg::MarkdownRenderer.stubs(:new).returns(md_renderer)
       Gutenberg::Chapter.new(:markdown_file => "foo.md").title.must_equal("hello")
     end
 

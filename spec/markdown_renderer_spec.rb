@@ -3,7 +3,9 @@ require_relative '../lib/gutenberg/markdown_renderer.rb'
 
 describe Gutenberg::MarkdownRenderer do
   before do
-    @renderer = Gutenberg::MarkdownRenderer.new("slug", "Slug")
+    @hyphen = mock('hyphen')
+    Text::Hyphen.stubs(:new).returns(@hyphen)
+    @renderer = Gutenberg::MarkdownRenderer.new("slug", "Slug", "en_us")
   end
 
   describe "#title" do
@@ -15,11 +17,23 @@ describe Gutenberg::MarkdownRenderer do
   end
 
   describe "#paragraph" do
+    it "runs text through text-hyphen" do
+      @hyphen.expects(:visualize).with("hello", "&shy;")
+      @renderer.paragraph("hello")
+    end
+
+    it "runs text through text-hyphen when paragraph starts with !" do
+      @hyphen.expects(:visualize).with("hello", "&shy;")
+      @renderer.paragraph("!note hello")
+    end
+
     it "generates a p tag" do
+      @hyphen.stubs(:visualize).returns("hello")
       @renderer.paragraph("hello").must_match /<p[^>]*>hello<\/p>/
     end
 
     it "generates a div tag when paragraph starts with !" do
+      @hyphen.stubs(:visualize).returns("hello")
       @renderer.paragraph("!note hello")
         .must_match /<div.*?class=['"]note['"][^>]*><p[^>]*>hello<\/p><\/div>/
     end
@@ -42,7 +56,7 @@ describe Gutenberg::MarkdownRenderer do
     end
 
     it "returns a default node for the content when not given a name" do
-      renderer = Gutenberg::MarkdownRenderer.new("slug", nil)
+      renderer = Gutenberg::MarkdownRenderer.new("slug", nil, "en_us")
       renderer.outline.text = "Untitled"
     end
 

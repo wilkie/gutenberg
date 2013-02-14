@@ -7,6 +7,7 @@ module Gutenberg
   class MarkdownRenderer < Redcarpet::Render::HTML
     require 'nokogiri'
     require 'cgi'
+    require 'text/hyphen'
 
     # Returns the root Gutenberg::Node for the chapter contents.
     # You can traverse this data structure to get a layout of the headers
@@ -20,18 +21,21 @@ module Gutenberg
     # Creates a new renderer that can be given to Redcarpet. It expects to
     # receive a slug to use as a safe anchor and the chapter name in case a
     # primary header is not used. The name is overriden by a primary header.
-    def initialize(slug, name, *args)
+    def initialize(slug, name, language, *args)
       @outline = Node.new(name || "Untitled")
       @last = @outline
       @slug = slug
+      @hyphenator = Text::Hyphen.new(:language => language)
       super *args
     end
 
     # Generates HTML for a markdown paragraph.
     def paragraph(text)
       match = text.match /^!([^ ]+)\s(.*)/
+      text = match[2] if match
+      text = text.split(' ').map{|word| @hyphenator.visualize(word, "&shy;")}.join(' ')
       if match
-        "<div class='#{match[1]}'><p>#{match[2]}</p></div>\n\n"
+        "<div class='#{match[1]}'><p>#{text}</p></div>\n\n"
       else
         "<p>#{text}</p>\n\n"
       end
