@@ -1,0 +1,92 @@
+div.page {
+  width: 600px;
+  height: 800px;
+  padding: 10px;
+  background-color: white;
+  color: black;
+  margin-bottom: 10px;
+}
+div.page div.footer {
+  text-align: center;
+}
+body {
+  background-color: black;
+  color: white;
+  width: 600px;
+  margin: 10px
+}
+h1 {
+  text-align: center;
+  margin-top: 80px;
+  font-size: 3em;
+  margin-bottom: 80px;
+  font-family: "Lusitana", serif;
+}
+h2 {
+  text-align: center;
+  font-size: 1.8em;
+  margin-bottom: 10px;
+  margin-top: 30px;
+  font-family: "Lusitana", serif;
+}
+h3 {
+  font-size: 1.5em;
+} 
+body > p, .page > p {
+  font-size: 16px;
+//  font-family: "times";
+  font-weight: 200;
+  margin-top: 13px;
+  line-height: 25px;
+  text-align: justify;
+  text-indent: 40px;
+  -moz-hyphens: manual;
+  -webkit-hyphens: manual;
+  hyphens: manual;
+  font-family: "Libre Baskerville", sans-serif;
+}
+body.firefox .page > p {
+  font-size: 14.75px;
+}
+.page > p.split-next {
+  text-indent: 0;
+}
+
+.page > p.split:after {
+  content: "";
+  line-height: 0;
+  display: inline-block;
+  width: 100%;
+}
+
+blockquote:before {
+  content '"'
+}
+blockquote {
+  width: 500px;
+  background-color: #c0c0c0;
+  color: #404040;
+  margin: 20px;
+  margin-left: 40px;
+  margin-right: 50px;
+  padding: 10px;
+}
+blockquote cite:before {
+  content: '-- '
+}
+blockquote cite {
+  font-style: italic;
+}
+blockquote div {
+  margin-top: 10px;
+  text-align: right;
+}
+div.note {
+  width: 500px;
+  background-color: #c0c0c0;
+  color: #404040;
+  margin: 20px;
+  margin-left: 40px;
+  margin-right: 50px;
+  padding: 10px;
+}
