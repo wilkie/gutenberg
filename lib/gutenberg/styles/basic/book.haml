@@ -1,10 +1,10 @@
-- if toc
+- if book.toc
   %h1#toc
     Table of Contents
   %div.toc
     %ul
-      - chapters.each do |c|
+      - book.chapters.each do |c|
         = format_outline(c.outline)
 
-- chapters.each do |c|
+- book.chapters.each do |c|
   !=c.html
