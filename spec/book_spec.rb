@@ -20,6 +20,11 @@ describe Gutenberg::Book do
       .style.must_equal("really_pretty")
   end
 
+  it "can be created with a table of contents flag" do
+    Gutenberg::Book.new({:toc => true})
+      .toc.must_equal(true)
+  end
+
   it "title can be pulled from yaml" do
     YAML.stubs(:load_file).returns({"title" => "Book Title"})
     Gutenberg::Book.new({:yaml => 'test.yaml'}).title.must_equal("Book Title")
@@ -33,6 +38,11 @@ describe Gutenberg::Book do
   it "style can be pulled from yaml" do
     YAML.stubs(:load_file).returns({"style" => "pretty"})
     Gutenberg::Book.new({:yaml => 'test.yaml'}).style.must_equal("pretty")
+  end
+
+  it "toc can be pulled from yaml" do
+    YAML.stubs(:load_file).returns({"toc" => true})
+    Gutenberg::Book.new({:yaml => 'test.yaml'}).toc.must_equal(true)
   end
 
   it "chapters can be pulled from yaml" do
@@ -51,6 +61,10 @@ describe Gutenberg::Book do
 
   it "has a reasonable default style" do
     Gutenberg::Book.new.style.must_equal("basic")
+  end
+
+  it "has a default of false for toc" do
+    Gutenberg::Book.new.toc.must_equal(false)
   end
 
   it "has an empty list of chapters by default" do
@@ -72,6 +86,11 @@ describe Gutenberg::Book do
     Gutenberg::Book.new({:yaml => "test.yaml"}).style.must_equal("basic")
   end
 
+  it "has a default of false for toc when not specified in the yaml" do
+    YAML.stubs(:load_file).returns({"title" => "foo"})
+    Gutenberg::Book.new({:yaml => "test.yaml"}).toc.must_equal(false)
+  end
+
   it "has an empty list of chapters by default when not specified in yaml" do
     YAML.stubs(:load_file).returns({"title" => "foo"})
     Gutenberg::Book.new({:yaml => "test.yaml"}).chapters.must_equal([])
@@ -90,6 +109,11 @@ describe Gutenberg::Book do
   it "can override the style that is specified in yaml" do
     YAML.stubs(:load_file).returns({"style" => "foo"})
     Gutenberg::Book.new({:yaml => "test.yaml", :style => "bar"}).style.must_equal("bar")
+  end
+
+  it "can override the toc setting that is specified in yaml" do
+    YAML.stubs(:load_file).returns({"toc" => false})
+    Gutenberg::Book.new({:yaml => "test.yaml", :toc => true}).toc.must_equal(true)
   end
 
   it "can override the chapters that are specified in yaml" do

@@ -17,6 +17,9 @@ module Gutenberg
     # The chapters gathered in this book
     attr_reader :chapters
 
+    # Whether or not the table of contents is displayed. Default: false
+    attr_reader :toc
+
     # Will create the book class and organize all metadata. Can be passed the
     # following options:
     # :yaml    - the filename of YAML that describes the book
@@ -26,6 +29,8 @@ module Gutenberg
     # :style   - the styling to use upon generation (default: "basic")
     #
     # :chapters - an array of chapter files (default: [])
+    #
+    # :toc      - whether or not the table of contents is displayed (default: false)
     def initialize(options = {})
       if options[:yaml]
         data = YAML::load_file(options[:yaml])
@@ -34,12 +39,15 @@ module Gutenberg
         options[:authors]  = options[:authors]  || data["authors"]
         options[:style]    = options[:style]    || data["style"]
 
+        options[:toc]      = options[:toc]      || data["toc"]
+
         options[:chapters] = options[:chapters] || data["chapters"]
       end
 
       @title    = options[:title]   || "Untitled"
       @authors  = options[:authors] || ["anonymous"]
       @style    = options[:style]   || "basic"
+      @toc      = options[:toc]     || false
 
       chapters = options[:chapters] || []
 
