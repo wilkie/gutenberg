@@ -44,6 +44,7 @@ describe Gutenberg::Chapter do
       # mock out a renderer that, by default, renders any markdown as <foo>
       @md_renderer = mock('md_renderer')
       @md_renderer.stubs(:title).returns("")
+      @md_renderer.stubs(:outline).returns(nil)
       Gutenberg::MarkdownRenderer.stubs(:new).returns(@md_renderer)
 
       @renderer = mock('renderer')
@@ -109,6 +110,7 @@ describe Gutenberg::Chapter do
       File.stubs(:read).returns("---\nauthors: ['foo']\n---\nblah")
       md_renderer = mock('md_renderer')
       md_renderer.stubs(:title).returns("hello")
+      md_renderer.stubs(:outline).returns(nil)
       Gutenberg::MarkdownRenderer.stubs(:new).returns(md_renderer)
       Gutenberg::Chapter.new(:markdown_file => "foo.md").title.must_equal("hello")
     end

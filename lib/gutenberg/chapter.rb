@@ -21,6 +21,10 @@ module Gutenberg
     # The content of this chapter rendered in html. Default: ""
     attr_accessor :html
 
+    # The outline of this chapter. This gives the root node of the document
+    # tree.
+    attr_accessor :outline
+
     # The language this chapter is written in. Default: "en_us"
 
     # Creates a new representation of a Chapter where options may be specified:
@@ -70,6 +74,7 @@ module Gutenberg
         markdown = Redcarpet::Markdown.new(renderer, :fenced_code_blocks => true)
 
         @html = markdown.render(options[:content])
+        @outline = renderer.outline;
 
         # title can be inferred from markdown
         options[:title] = options[:title] || renderer.title
