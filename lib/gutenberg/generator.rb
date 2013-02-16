@@ -1,3 +1,5 @@
+require 'gutenberg/html_supervisor'
+
 module Gutenberg
   # Generates HTML with the given style and book content.
   class Generator
@@ -12,8 +14,9 @@ module Gutenberg
     # Produce HTML for the given Gutenberg::Book.
     def render(book)
       template = Tilt.new("#{@view_path}/book.haml")
-      @layout.render(book) do
-        template.render book
+      supervisor = HTMLSupervisor.new(book)
+      @layout.render(supervisor) do
+        template.render supervisor
       end
     end
   end
