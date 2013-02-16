@@ -6,11 +6,31 @@ function detectUserAgent() {
   return true;
 }
 
+function toc(refs) {
+  toc = $('div.toc li');
+  $.each(toc, function(i, v) {
+    element = toc.slice(i, i+1);
+    link = element.children('a');
+    tag = link.attr('href').slice(1);
+    text = link.text();
+    width = link.innerWidth();
+    page_number = refs[tag];
+    element.prepend('<div class="toc_page_number" style="float: right"> ' + page_number + '</div>');
+    pn = element.children('div.toc_page_number').first();
+    while (width + pn.innerWidth() < element.innerWidth()) {
+      pn.prepend('.');
+    }
+    pn[0].removeChild(pn[0].firstChild);
+  });
+}
+
 function typeset(tag) {
   var $nodes = $(tag).children('[class!="not-rendered"]');
   var $old_nodes = $nodes;
   var last_page;
   var pages = 0;
+
+  var toc_refs = {};
 
   function form_page() {
     var body = $(tag);
@@ -129,6 +149,11 @@ function typeset(tag) {
         break;
       }
 
+      // Node Added
+      if (node.attr('id')) {
+        toc_refs[node.attr('id')] = pages + 1;
+      }
+
       curY = (new_node.position().top - page.position().top) + obj_height;
 
       if (node.is('h2') || node.is('h3')) {
@@ -150,5 +175,13 @@ function typeset(tag) {
   while ($nodes.length > 0) {
     form_page();
   }
+
+  // Do table of contents
+  toc(toc_refs);
   return true;
 }
+
+$(window).bind('load', function() {
+  detectUserAgent();
+  typeset('body');
+});

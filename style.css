@@ -32,6 +32,16 @@ h2 {
 h3 {
   font-size: 1.5em;
 } 
+div.toc {
+  margin-right: 40px;
+}
+div.toc ul {
+  margin-left: 40px;
+}
+div.toc ul li:last-child {
+  margin-bottom: 10px;
+}
+
 body > p, .page > p {
   font-size: 16px;
 //  font-family: "times";
