@@ -6,6 +6,21 @@ function detectUserAgent() {
   return true;
 }
 
+function romanize (num) {
+	if (!+num)
+		return false;
+	var	digits = String(+num).split(""),
+		key = ["","C","CC","CCC","CD","D","DC","DCC","DCCC","CM",
+		       "","X","XX","XXX","XL","L","LX","LXX","LXXX","XC",
+		       "","I","II","III","IV","V","VI","VII","VIII","IX"],
+		roman = "",
+		i = 3;
+	while (i--)
+		roman = (key[+digits.pop() + (i * 10)] || "") + roman;
+	return Array(+digits.join("") + 1).join("M") + roman;
+}
+
+
 function toc(refs) {
   toc = $('div.toc li');
   $.each(toc, function(i, v) {
@@ -28,21 +43,32 @@ function typeset(tag) {
   var $nodes = $(tag).children('[class!="not-rendered"]');
   var $old_nodes = $nodes;
   var last_page;
+
+  var aux_pages = 1;
   var pages = 0;
+
+  var page_name;
 
   var toc_refs = {};
 
   function form_page() {
     var body = $(tag);
 
-    if (last_page == undefined) {
-      body.prepend('<div id="page-' + pages + '" class="page"></div>');
+    if (pages != 0) {
+      page_name = pages;
     }
     else {
-      $('<div id="page-' + pages + '" class="page"></div>').insertAfter(last_page);
+      page_name = romanize(aux_pages).toLowerCase();
     }
 
-    var page = $('#page-' + pages);
+    if (last_page == undefined) {
+      body.prepend('<div id="page-' + page_name + '" class="page"></div>');
+    }
+    else {
+      $('<div id="page-' + page_name + '" class="page"></div>').insertAfter(last_page);
+    }
+
+    var page = $('#page-' + page_name);
     last_page = page;
 
     var pageBreak = false;
@@ -144,14 +170,16 @@ function typeset(tag) {
         }
 
         // Append footer
-        page.append("<div class='footer'>" + (pages + 1) + "</div>");
+        page.append("<div class='footer'>" + page_name + "</div>");
         page.children("div.footer").css("margin-top", "+=" + diff_height);
+
+        if (pageBreak && pages == 0) { pages = 1; return; }
         break;
       }
 
       // Node Added
       if (node.attr('id')) {
-        toc_refs[node.attr('id')] = pages + 1;
+        toc_refs[node.attr('id')] = page_name;
       }
 
       curY = (new_node.position().top - page.position().top) + obj_height;
@@ -169,7 +197,12 @@ function typeset(tag) {
       $nodes = $nodes.slice(1);
     }
 
-    pages++;
+    if (pages > 0) {
+      pages++;
+    }
+    else {
+      aux_pages++;
+    }
   }
 
   while ($nodes.length > 0) {
