@@ -73,6 +73,7 @@ blockquote:before {
   content '"'
 }
 blockquote {
+  border-radius: 12px;
   width: 500px;
   background-color: #c0c0c0;
   color: #404040;
@@ -91,7 +92,13 @@ blockquote div {
   margin-top: 10px;
   text-align: right;
 }
-div.note {
+blockquote img {
+  width: 40px;
+  height: 40px;
+  float: left;
+  margin-right: 13px;
+}
+div.inset {
   width: 500px;
   background-color: #c0c0c0;
   color: #404040;
@@ -99,4 +106,14 @@ div.note {
   margin-left: 40px;
   margin-right: 50px;
   padding: 10px;
+  min-height: 40px;
+  border-radius: 12px;
+}
+div.inset img {
+  width: 40px;
+  height: 40px;
+  float: left;
+  margin-right: 13px;
+}
+div.inset p {
 }

@@ -6,4 +6,11 @@ assets: ["css/style.css",
          "css/reset.css",
          "js/jquery.js",
          "js/typeset.js",
-         "images/note.png"]
+         "images/note.svg",
+         "images/quote.svg",
+         "images/error.svg",
+         "images/caution.svg"]
+images: {"note":      "images/note.svg",
+         "quote":     "images/quote.svg",
+         "error":     "images/error.svg",
+         "attention": "images/caution.svg"}
