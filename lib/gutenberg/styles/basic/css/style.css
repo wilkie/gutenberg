@@ -109,6 +109,16 @@ div.inset {
   min-height: 40px;
   border-radius: 12px;
 }
+div.image {
+  padding: 30px;
+  text-align:center;
+}
+div.image img {
+  padding: 7px;
+  background-color: #c0c0c0;
+  border: 1px solid #d0d0d0;
+  border-radius: 12px;
+}
 div.inset img {
   width: 40px;
   height: 40px;
