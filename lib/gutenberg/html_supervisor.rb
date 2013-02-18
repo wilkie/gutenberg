@@ -9,6 +9,7 @@ module Gutenberg
       @book = book
     end
 
+    # Returns an unordered list representing the given outline.
     def format_outline(outline)
       return "" if outline.nil?
       if outline.text == "References"
