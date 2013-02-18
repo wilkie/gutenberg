@@ -1,20 +1,22 @@
 require 'gutenberg/chapter'
+require 'gutenberg/style'
 
 module Gutenberg
   # The collection of resources that make up the book.
   class Book
     require 'yaml'
 
-    # The title of the book
+    # The title of the book. Default: "Untitled"
     attr_reader :title
 
-    # The authors of the book
+    # The authors of the book. Default: ["anonymous"]
     attr_reader :authors
 
-    # The preferred style to use to generate it
+    # The preferred style represented by a Gutenberg::Style to use to generate it.
+    # By default, this will load a generic basic style.
     attr_reader :style
 
-    # The chapters gathered in this book
+    # The chapters gathered in this book as Gutenberg::Chapter. Default: []
     attr_reader :chapters
 
     # Whether or not the table of contents is displayed. Default: false
@@ -46,8 +48,10 @@ module Gutenberg
 
       @title    = options[:title]   || "Untitled"
       @authors  = options[:authors] || ["anonymous"]
-      @style    = options[:style]   || "basic"
       @toc      = options[:toc]     || false
+      style     = options[:style]   || "basic"
+
+      @style = Gutenberg::Style.new(style)
 
       chapters = options[:chapters] || []
 
