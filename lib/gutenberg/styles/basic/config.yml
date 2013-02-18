@@ -1,6 +1,7 @@
 name: "Basic"
 author: "wilkie"
-attribution: false
+author-website: http://blog.davewilkinsonii.com
+attribution: true
 description: "Applies a very basic style with no frills."
 assets: ["css/style.css",
          "css/reset.css",
@@ -9,8 +10,14 @@ assets: ["css/style.css",
          "images/note.svg",
          "images/quote.svg",
          "images/error.svg",
+         "images/video.svg",
+         "images/sound.svg",
+         "images/book.svg",
          "images/caution.svg"]
 images: {"note":      "images/note.svg",
          "quote":     "images/quote.svg",
          "error":     "images/error.svg",
+         "sound":     "images/sound.svg",
+         "video":     "images/video.svg",
+         "docs":      "images/book.svg",
          "attention": "images/caution.svg"}

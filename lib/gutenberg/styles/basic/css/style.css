@@ -1,3 +1,9 @@
+p em {
+  font-style: italic;
+}
+p strong {
+  font-weight: bold;
+}
 div.page {
   width: 600px;
   height: 800px;
@@ -126,4 +132,14 @@ div.inset img {
   margin-right: 13px;
 }
 div.inset p {
+}
+
+.acknowledgements ul {
+  margin-bottom: 20px;
+  list-style-type: square;
+  list-style-position: inside;
+}
+
+.acknowledgements ul li {
+  margin-bottom: 10px;
 }

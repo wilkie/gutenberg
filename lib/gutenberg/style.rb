@@ -11,6 +11,9 @@ module Gutenberg
     # The author of the style. Default: "anonymous"
     attr_reader :author
 
+    # The url that represents the author. Default: nil
+    attr_reader :author_url
+
     # Description of the style. Default: ""
     attr_reader :description
 
@@ -38,7 +41,9 @@ module Gutenberg
       if File.exists?("#{@path}/config.yml")
         data = YAML.load_file("#{@path}/config.yml")
 
+        name = data["name"] if data["name"]
         options[:author]      ||= data["author"]
+        options[:author_url]  ||= data["author-website"]
         options[:description] ||= data["description"]
         options[:assets]      ||= data["assets"]
         options[:images]      ||= data["images"]
@@ -47,6 +52,7 @@ module Gutenberg
 
       # Assign values
       @author      = options[:author]      || "anonymous"
+      @author_url  = options[:author_url]
       @attribute   = options[:attribution] unless options[:attribution].nil?
       @attribute   = true if @attribute.nil?
       @description = options[:description] || ""
