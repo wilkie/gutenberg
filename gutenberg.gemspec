@@ -8,9 +8,11 @@ Gem::Specification.new do |gem|
   gem.version       = Gutenberg::VERSION
   gem.authors       = ["wilkie"]
   gem.email         = ["wilkie05@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
-  gem.homepage      = ""
+  gem.description   = %q{A book generator that takes markdown input and produces a typeset HTML document.}
+  gem.summary       = %q{This project can take markdown and use either a predefined style or a
+                         custom style and use this to generate an HTML document. It uses javascript to
+                         typeset the document and present it with the traditional book form factor.}
+  gem.homepage      = "https://github.com/wilkie/gutenberg"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
