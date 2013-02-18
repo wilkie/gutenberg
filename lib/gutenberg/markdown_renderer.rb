@@ -32,6 +32,10 @@ module Gutenberg
 
     # Generates HTML for a markdown paragraph.
     def paragraph(text)
+      if text.start_with? "<"
+        return text
+      end
+
       match = text.match /^!([^ ]+)\s(.*)/
       text = match[2] if match
       text = text.split(' ').map{|word| @hyphenator.visualize(word, "&shy;")}.join(' ')
@@ -105,7 +109,7 @@ module Gutenberg
       end
 
       caption = "<br /><div class='caption'>#{caption}</div>" unless caption == ""
-      "</p><div class='image'>#{img_source}#{caption}</div><p>\n\n"
+      "<div class='image'>#{img_source}#{caption}</div>\n\n"
     end
 
     # Generates HTML for a markdown header.
