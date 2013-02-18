@@ -16,6 +16,11 @@ module Gutenberg
     # :css    = Stylesheet
     attr_reader :type
 
+    # Whether or not this asset should have attribution.
+    def attribute?
+      @attribution
+    end
+
     # The name of the author of this asset.
     attr_reader :author
 
@@ -36,7 +41,6 @@ module Gutenberg
     # Creates a reference to an asset given a path.
     def initialize(path, check_path = nil)
       # Check both local path and gem path
-      puts "checking #{path}, #{File.exists?("#{Asset.path}/#{path}")}, #{File.exists?("#{check_path}/#{path}")}"
       if File.exists?(path)
         @path = File.expand_path(path)
       elsif File.exists?("#{Asset.path}/#{path}")
@@ -55,11 +59,16 @@ module Gutenberg
 
       if File.exists?(metadata_path)
         metadata = YAML.load_file(metadata_path)
-        @author = metadata["author"]
+        @author = metadata["author"] || "anonymous"
         @author_url = metadata["author-website"]
         @collection = metadata["collection"]
         @collection_url = metadata["collection-website"]
         @name = metadata["name"]
+        @attribution = metadata["attribution"]
+        @attribution = true if metadata["attribution"].nil?
+      else
+        @attribution = false
+        @author = "anonymous"
       end
     end
 

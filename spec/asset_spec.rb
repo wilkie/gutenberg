@@ -89,10 +89,10 @@ describe Gutenberg::Asset do
       Gutenberg::Asset.new("images/foo.png").name.must_equal "foo"
     end
 
-    it "defaults author to nil when yaml does not exist" do
+    it "defaults author to anonymous when yaml does not exist" do
       File.stubs(:exists?).returns(false)
       File.stubs(:exists?).with("images/foo.png").returns(true)
-      Gutenberg::Asset.new("images/foo.png").author.must_equal nil
+      Gutenberg::Asset.new("images/foo.png").author.must_equal "anonymous"
     end
 
     it "defaults author_url to nil when yaml does not exist" do
@@ -119,10 +119,10 @@ describe Gutenberg::Asset do
       Gutenberg::Asset.new("images/foo.png").name.must_equal nil
     end
 
-    it "defaults author to nil when not defined in the yaml" do
+    it "defaults author to anonymous when not defined in the yaml" do
       File.stubs(:exists?).returns(true)
       YAML.stubs(:load_file).returns({})
-      Gutenberg::Asset.new("images/foo.png").author.must_equal nil
+      Gutenberg::Asset.new("images/foo.png").author.must_equal "anonymous"
     end
 
     it "defaults author_url to nil when not defined in the yaml" do
