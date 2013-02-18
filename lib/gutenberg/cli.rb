@@ -50,8 +50,10 @@ module Gutenberg
 
         # Default
         book = Book.new(:yaml => ARGV[0])
+        basename = File.basename(ARGV[0], File.extname(ARGV[0]))
         gen  = Generator.new("basic")
-        puts gen.render(book)
+        gen.render_to book, "#{basename}.html"
+        gen.copy book, "."
         exit 0
       end
     end

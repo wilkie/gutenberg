@@ -3,9 +3,11 @@ require_relative '../lib/gutenberg/markdown_renderer.rb'
 
 describe Gutenberg::MarkdownRenderer do
   before do
+    @style = mock('style')
+    @style.stubs(:image_for).returns("image")
     @hyphen = mock('hyphen')
     Text::Hyphen.stubs(:new).returns(@hyphen)
-    @renderer = Gutenberg::MarkdownRenderer.new("slug", "Slug", "en_us")
+    @renderer = Gutenberg::MarkdownRenderer.new("slug", "Slug", "en_us", @style)
   end
 
   describe "#title" do
@@ -35,18 +37,39 @@ describe Gutenberg::MarkdownRenderer do
     it "generates a div tag when paragraph starts with !" do
       @hyphen.stubs(:visualize).returns("hello")
       @renderer.paragraph("!note hello")
-        .must_match /<div.*?class=['"]note['"][^>]*><p[^>]*>hello<\/p><\/div>/
+        .must_match /<div.*?class=['"]inset note['"][^>]*><img.*?><p[^>]*>hello<\/p><\/div>/
+    end
+
+    it "discovers the image from the style class" do
+      @hyphen.stubs(:visualize).returns("hello")
+      @style.expects(:image_for).with('note').returns("foo")
+      @renderer.paragraph("!note hello")
+        .must_match /<img.*?src=['"]foo['"]\s*\/>/
     end
   end
 
   describe "#block_quote" do
     it "generates a blockquote tag" do
-      @renderer.block_quote("hello").must_match /<blockquote[^>]*><p>hello<\/p><\/blockquote>/
+      @renderer.block_quote("hello").must_match /<blockquote[^>]*><img.*?><p>hello<\/p><\/blockquote>/
     end
 
     it "generates a div and cite inside the blockquote tag when citation is found" do
       @renderer.block_quote("hello -- foo bar")
-        .must_match /<blockquote[^>]*><p>hello<\/p><div><cite>foo bar<\/cite><\/div><\/blockquote>/
+        .must_match /<blockquote[^>]*><img.*?><p>hello<\/p><div><cite>foo bar<\/cite><\/div><\/blockquote>/
+    end
+
+    it "discovers the image from the style class" do
+      @hyphen.stubs(:visualize).returns("hello")
+      @style.expects(:image_for).with('quote').returns("foo")
+      @renderer.block_quote("hello")
+        .must_match /<img.*?src=['"]foo['"]\s*\/>/
+    end
+
+    it "discovers the image from the style class when citation is found" do
+      @hyphen.stubs(:visualize).returns("hello -- foo bar")
+      @style.expects(:image_for).with('quote').returns("foo")
+      @renderer.block_quote("hello")
+        .must_match /<img.*?src=['"]foo['"]\s*\/>/
     end
   end
 
@@ -56,7 +79,7 @@ describe Gutenberg::MarkdownRenderer do
     end
 
     it "returns a default node for the content when not given a name" do
-      renderer = Gutenberg::MarkdownRenderer.new("slug", nil, "en_us")
+      renderer = Gutenberg::MarkdownRenderer.new("slug", nil, "en_us", @style)
       renderer.outline.text = "Untitled"
     end
 

@@ -52,7 +52,7 @@ describe Gutenberg::Book do
 
   it "chapters can be pulled from yaml" do
     YAML.stubs(:load_file).returns({"chapters" => ["foo"]})
-    Gutenberg::Chapter.expects(:new).with({:markdown_file => "foo"}).returns("CHAPTER")
+    Gutenberg::Chapter.expects(:new).with(has_entry(:markdown_file, "foo")).returns("CHAPTER")
     Gutenberg::Book.new({:yaml => "test.yaml"}).chapters.must_equal(["CHAPTER"])
   end
 
@@ -126,14 +126,20 @@ describe Gutenberg::Book do
 
   it "can override the chapters that are specified in yaml" do
     YAML.stubs(:load_file).returns({"chapters" => ["foo"]})
-    Gutenberg::Chapter.expects(:new).with({:markdown_file => "bar"}).returns("CHAPTER")
+    Gutenberg::Chapter.expects(:new).with(has_entry(:markdown_file, "bar")).returns("CHAPTER")
     Gutenberg::Book.new({:yaml => "test.yaml", :chapters => ["bar"]}).chapters.must_equal(["CHAPTER"])
   end
 
   it "creates a Chapter object for a listed chapter" do
     c = Gutenberg::Chapter.new
-    Gutenberg::Chapter.expects(:new).with({:markdown_file => "foo"}).returns(c)
+    Gutenberg::Chapter.expects(:new).with(has_entry(:markdown_file, "foo")).returns(c)
     Gutenberg::Book.new({:chapters => ["foo"]})
       .chapters.first.must_be_instance_of(Gutenberg::Chapter)
+  end
+
+  it "passes the style to the Chapter objects" do
+    Gutenberg::Chapter.expects(:new).with(has_entry(:style, "foo")).returns("CHAPTER")
+    Gutenberg::Style.stubs(:new).returns("foo")
+    Gutenberg::Book.new(:chapters => ["foo"], :style => "pretty")
   end
 end

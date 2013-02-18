@@ -39,9 +39,10 @@ module Gutenberg
         data = YAML.load_file("#{@path}/config.yml")
 
         options[:author]      ||= data["author"]
-        options[:attribution] = data["attribution"] if options[:attribution].nil?
         options[:description] ||= data["description"]
         options[:assets]      ||= data["assets"]
+        options[:images]      ||= data["images"]
+        options[:attribution]   = data["attribution"] if options[:attribution].nil?
       end
 
       # Assign values
@@ -53,7 +54,19 @@ module Gutenberg
 
       @assets = assets.map{|a| Gutenberg::Asset.new(a, @path)}
 
+      @images = options[:images] || {}
+
       @name = name
+    end
+
+    def image_for(type)
+      @images[type]
+    end
+
+    def copy(to)
+      @assets.each do |a|
+        a.copy(to)
+      end
     end
   end
 end

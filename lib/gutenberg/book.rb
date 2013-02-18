@@ -57,7 +57,7 @@ module Gutenberg
 
       @chapters = []
       chapters.each do |c|
-        @chapters << Chapter.new(:markdown_file => c)
+        @chapters << Chapter.new(:markdown_file => c, :style => @style)
       end
     end
   end

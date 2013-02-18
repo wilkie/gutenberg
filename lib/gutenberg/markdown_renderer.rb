@@ -21,11 +21,12 @@ module Gutenberg
     # Creates a new renderer that can be given to Redcarpet. It expects to
     # receive a slug to use as a safe anchor and the chapter name in case a
     # primary header is not used. The name is overriden by a primary header.
-    def initialize(slug, name, language, *args)
+    def initialize(slug, name, language, style, *args)
       @outline = Node.new(name || "Untitled")
       @last = @outline
       @slug = slug
       @hyphenator = Text::Hyphen.new(:language => language)
+      @style = style
       super *args
     end
 
@@ -35,7 +36,7 @@ module Gutenberg
       text = match[2] if match
       text = text.split(' ').map{|word| @hyphenator.visualize(word, "&shy;")}.join(' ')
       if match
-        "<div class='#{match[1]}'><p>#{text}</p></div>\n\n"
+        "<div class='inset #{match[1]}'><img src='#{@style.image_for(match[1])}' /><p>#{text}</p></div>\n\n"
       else
         "<p>#{text}</p>\n\n"
       end
@@ -48,9 +49,9 @@ module Gutenberg
       stripped_text = Nokogiri::HTML(text).xpath("//text()").remove.text
       match = text.match /^(.*)--(.*)$/
       if match
-        "<blockquote><p>#{match[1].strip}</p><div><cite>#{match[2].strip}</cite></div></blockquote>\n\n"
+        "<blockquote><img src='#{@style.image_for('quote')}' /><p>#{match[1].strip}</p><div><cite>#{match[2].strip}</cite></div></blockquote>\n\n"
       else
-        "<blockquote><p>#{text}</p></blockquote>\n\n"
+        "<blockquote><img src='#{@style.image_for('quote')}' /><p>#{text}</p></blockquote>\n\n"
       end
     end
 

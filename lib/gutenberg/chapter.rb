@@ -35,6 +35,7 @@ module Gutenberg
     # :authors       - an array of authors (default: [])
     # :slug          - the slug to identify this chapter (default: inferred from title)
     # :language      - the language this chapter is written in (default: en_us)
+    # :style         - the Gutenberg::Style class to use to render the content
     def initialize(options = {})
       @format = options[:format] || :text
 
@@ -70,7 +71,8 @@ module Gutenberg
       when :markdown
         renderer = Gutenberg::MarkdownRenderer.new(options[:slug],
                                                    options[:title],
-                                                   options[:language])
+                                                   options[:language],
+                                                   options[:style])
         markdown = Redcarpet::Markdown.new(renderer, :fenced_code_blocks => true)
 
         @html = markdown.render(options[:content])

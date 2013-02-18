@@ -19,5 +19,16 @@ module Gutenberg
         template.render supervisor
       end
     end
+
+    # Produce an HTML file for the given Gutenberg::Book.
+    def render_to(book, file)
+      File.open(file, "w+") do |f|
+        f.write render(book)
+      end
+    end
+
+    def copy(book, to)
+      book.style.copy(to)
+    end
   end
 end

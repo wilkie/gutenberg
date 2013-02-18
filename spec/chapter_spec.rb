@@ -65,8 +65,14 @@ describe Gutenberg::Chapter do
 
     it "passes the custom renderer a slug and a language as strings" do
       Gutenberg::MarkdownRenderer.expects(:new)
-        .with(instance_of(String), anything, instance_of(String)).returns(@md_renderer)
+        .with(instance_of(String), anything, instance_of(String), anything).returns(@md_renderer)
       Gutenberg::Chapter.new(:markdown_file => "foo.md")
+    end
+
+    it "passes the style to the custom renderer" do
+      Gutenberg::MarkdownRenderer.expects(:new)
+        .with(anything, anything, anything, "foo").returns(@md_renderer)
+      Gutenberg::Chapter.new(:markdown_file => "foo.md", :style => "foo")
     end
 
     it "generates a slug based on the filename of the markdown" do
