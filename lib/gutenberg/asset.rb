@@ -34,12 +34,14 @@ module Gutenberg
     end
 
     # Creates a reference to an asset given a path.
-    def initialize(path)
+    def initialize(path, check_path = nil)
       # Check both local path and gem path
       if File.exists?(path)
         @path = File.expand_path(path)
       elsif File.exists?("#{Asset.path}/#{path}")
         @path = "#{Asset.path}/#{path}"
+      elsif not check_path.nil? and File.exists?("#{check_path}/#{path}")
+        @path = "#{check_path}/#{path}"
       else
         raise Errno::ENOENT
       end

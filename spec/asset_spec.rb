@@ -10,6 +10,14 @@ describe Gutenberg::Asset do
   end
 
   describe "#initialize" do
+    it "should determine the absolute path of the style-supplied asset" do
+      File.stubs(:exists?).returns(false)
+      File.stubs(:exists?).with("foobar/images/foo.png").returns(true)
+      Gutenberg::Asset.new("images/foo.png", "foobar").path.must_equal(
+        File.expand_path(
+          "#{File.dirname(__FILE__)}/../foobar/images/foo.png"))
+    end
+
     it "should determine the absolute path of the gem-supplied asset" do
       File.stubs(:exists?).returns(false)
       File.stubs(:exists?).with("#{Gutenberg::Asset.path}/images/foo.png").returns(true)

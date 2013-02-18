@@ -1,0 +1,9 @@
+name: "Basic"
+author: "wilkie"
+attribution: false
+description: "Applies a very basic style with no frills."
+assets: ["css/style.css",
+         "css/reset.css",
+         "js/jquery.js",
+         "js/typeset.js",
+         "images/note.png"]
