@@ -1,9 +1,9 @@
 - if book.toc
   %h1#toc
     Table of Contents
-  %div.toc
-    %ul
-      - book.chapters.each do |c|
+  - book.chapters.each do |c|
+    %div.toc
+      %ul
         = format_outline(c.outline)
 
 - book.chapters.each do |c|
