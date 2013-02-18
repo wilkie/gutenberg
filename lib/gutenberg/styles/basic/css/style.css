@@ -37,7 +37,10 @@ h2 {
 }
 h3 {
   font-size: 1.5em;
-} 
+}
+.page div.toc:first-child {
+  margin-top: 40px;
+}
 div.toc {
   margin-right: 40px;
 }
@@ -50,7 +53,6 @@ div.toc ul li:last-child {
 
 body > p, .page > p {
   font-size: 16px;
-//  font-family: "times";
   font-weight: 200;
   margin-top: 13px;
   line-height: 25px;
