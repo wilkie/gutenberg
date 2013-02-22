@@ -9,11 +9,13 @@
     /[if lt IE 9]
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 
-    %link{:href=>'http://fonts.googleapis.com/css?family=Lusitana|Libre+Baskerville', :rel=>'stylesheet', :type=>'text/css'}
+    %link{:href=>'http://fonts.googleapis.com/css?family=Lusitana|Inconsolata|Libre+Baskerville', :rel=>'stylesheet', :type=>'text/css'}
     %link{:rel=>'stylesheet', :type=>'text/css', :href=>'css/reset.css'}
     %link{:rel=>'stylesheet', :type=>'text/css', :href=>'css/style.css'}
+    %link{:rel=>'stylesheet', :type=>'text/css', :href=>'css/zenburn.css'}
   %body
     = yield
 
     %script{:type=>"text/javascript", :src=>"js/jquery.js"}
+    %script{:type=>"text/javascript", :src=>"js/prettify.js"}
     %script{:type=>"text/javascript", :src=>"js/typeset.js"}

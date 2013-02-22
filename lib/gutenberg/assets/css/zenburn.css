@@ -1,0 +1,34 @@
+/* zenburn scheme ported from vim to google prettify */
+pre { display: block; background-color: #3f3f3f }
+pre .nocode { background-color: none; color: #000 }
+pre .str { color: #cc9393 } /* string */
+pre .kwd { color: #f0dfaf }
+pre .com { color: #7f9f7f } /* comment     */
+pre .typ { color: #dfdfbf } /* type        */
+pre .lit { color: #8cd0d3 } /* literal     */
+pre .pun { color: #fff }    /* punctuation */
+pre .pln { color: #dcdccc }    /* plaintext   */
+pre .tag { color: #e89393 ; font-weight: bold } /* html/xml tag   */
+pre .atn { color: #dfdfbf ; font-weight: bold }  /* attribute name */
+pre .atv { color: #dca3a3 } /* attribute value */
+pre .dec { color: #efdcbc } /* decimal         */
+
+/* Specify class=linenums on a pre to get line numbering */
+ol.linenums { margin-top: 0; margin-bottom: 0; color: #AEAEAE } /* IE indents via margin-left */
+li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8 { list-style-type: none }
+/* Alternate shading for lines */
+li.L1,li.L3,li.L5,li.L7,li.L9 { }
+
+@media print {
+  pre { background-color: none }
+  pre .str, code .str { color: #060 }
+  pre .kwd, code .kwd { color: #006; font-weight: bold }
+  pre .com, code .com { color: #600; font-style: italic }
+  pre .typ, code .typ { color: #404; font-weight: bold }
+  pre .lit, code .lit { color: #044 }
+  pre .pun, code .pun { color: #440 }
+  pre .pln, code .pln { color: #000 }
+  pre .tag, code .tag { color: #006; font-weight: bold }
+  pre .atn, code .atn { color: #404 }
+  pre .atv, code .atv { color: #060 }
+}

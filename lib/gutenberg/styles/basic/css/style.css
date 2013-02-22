@@ -145,3 +145,16 @@ div.inset p {
 .acknowledgements ul li {
   margin-bottom: 10px;
 }
+pre {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 3px;
+  padding-bottom: 5px;
+}
+pre code {
+	font-size: 14px;
+}
+
+code {
+	font-family: 'Inconsolata', monospace;
+}

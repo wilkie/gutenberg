@@ -5,8 +5,10 @@ attribution: true
 description: "Applies a very basic style with no frills."
 assets: ["css/style.css",
          "css/reset.css",
+         "css/zenburn.css",
          "js/jquery.js",
          "js/typeset.js",
+         "js/prettify.js",
          "images/note.svg",
          "images/quote.svg",
          "images/error.svg",
