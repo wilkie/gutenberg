@@ -1,0 +1,6 @@
+title: My Book
+authors: ["wilkie"]
+
+toc: true
+
+chapters: ["chapter_1.md", "chapter_2.md"] #, "chapter_3.md", "chapter_4.md", "chapter_5.md", "chapter_6.md", "chapter_7.md", "chapter_8.md", "chapter_9.md"]

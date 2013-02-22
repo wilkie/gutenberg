@@ -6,6 +6,20 @@ function detectUserAgent() {
   return true;
 }
 
+function syntaxHighlight() {
+  // add prettyprint class to all <pre><code></code></pre> blocks
+  var prettify = false;
+  $("pre code").parent().each(function() {
+    $(this).addClass('prettyprint');
+    prettify = true;
+  });
+
+  // if code blocks were found, bring in the prettifier ...
+  if ( prettify ) {
+    prettyPrint();
+  }
+}
+
 function romanize (num) {
 	if (!+num)
 		return false;
@@ -42,7 +56,6 @@ function toc(refs) {
 function typeset(tag) {
   var $nodes = $(tag).children('[class!="not-rendered"]');
   var $old_nodes = $nodes;
-  var last_page;
 
   var aux_pages = 1;
   var pages = 0;
@@ -51,9 +64,11 @@ function typeset(tag) {
 
   var toc_refs = {};
 
-  function form_page() {
-    var body = $(tag);
+  var body = $(tag);
+  body.prepend('<div id="page-0" class="page"></div>');
+  var last_page = $('#page-0');
 
+  function form_page() {
     if (pages != 0) {
       page_name = pages;
     }
@@ -61,12 +76,7 @@ function typeset(tag) {
       page_name = romanize(aux_pages).toLowerCase();
     }
 
-    if (last_page == undefined) {
-      body.prepend('<div id="page-' + page_name + '" class="page"></div>');
-    }
-    else {
-      $('<div id="page-' + page_name + '" class="page"></div>').insertAfter(last_page);
-    }
+    $('<div id="page-' + page_name + '" class="page"></div>').insertAfter(last_page);
 
     var page = $('#page-' + page_name);
     last_page = page;
@@ -156,7 +166,7 @@ function typeset(tag) {
         var $divs = page.children('div');
         var $hs = page.children('h2');
 
-        if (($divs.length + $hs.length) > 0) {
+        if (!pageBreak && ($divs.length + $hs.length) > 0) {
           var num_things = $ps.length + (2 * $divs.length) + (3 * $hs.length);
 
           var padding = diff_height / num_things;
@@ -216,5 +226,6 @@ function typeset(tag) {
 
 $(window).bind('load', function() {
   detectUserAgent();
+  syntaxHighlight();
   typeset('body');
 });
