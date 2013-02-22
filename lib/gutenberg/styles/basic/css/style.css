@@ -29,14 +29,16 @@ h1 {
   font-family: "Lusitana", serif;
 }
 h2 {
-  text-align: center;
   font-size: 1.8em;
+  border-bottom: 1px solid #777;
   margin-bottom: 10px;
   margin-top: 30px;
   font-family: "Lusitana", serif;
+  color: #355BF0;
 }
 h3 {
   font-size: 1.5em;
+  color: #2426CF;
 }
 .page div.toc:first-child {
   margin-top: 40px;
@@ -53,7 +55,8 @@ div.toc ul li:last-child {
 
 body > p, .page > p {
   font-size: 16px;
-  font-weight: 200;
+  font-weight: normal;
+  font-style: normal;
   margin-top: 13px;
   line-height: 25px;
   text-align: justify;
@@ -61,7 +64,7 @@ body > p, .page > p {
   -moz-hyphens: manual;
   -webkit-hyphens: manual;
   hyphens: manual;
-  font-family: "Libre Baskerville", sans-serif;
+  font-family: "Oxygen", sans-serif;
 }
 body.firefox .page > p {
   font-size: 14.75px;
@@ -122,10 +125,10 @@ div.image {
   text-align:center;
 }
 div.image img {
-  padding: 7px;
   background-color: #c0c0c0;
-  border: 1px solid #d0d0d0;
-  border-radius: 12px;
+  border: 1px solid #555;
+  border-radius: 10px;
+  box-shadow 0px 0px 2px 1px #333;
 }
 div.inset img {
   width: 40px;
@@ -146,13 +149,21 @@ div.inset p {
   margin-bottom: 10px;
 }
 pre {
+  margin-top: 15px;
+  margin-bottom: 15px;
+
   padding-left: 10px;
   padding-right: 10px;
-  padding-top: 3px;
-  padding-bottom: 5px;
+  padding-top: 6px;
+  padding-bottom: 8px;
+
+  text-shadow: 0.07em 0.07em #181818;
+  border-radius: 4px 4px 4px 4px;
+  box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.40) inset;
+  border: 1px solid #222;
 }
 pre code {
-	font-size: 14px;
+	font-size: 15px;
 }
 
 code {
