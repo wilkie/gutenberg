@@ -1,6 +1,8 @@
 # Gutenberg
 
-TODO: Write a gem description
+This project strives to produce accessible HTML content from extended markdown and producing a hypermedia document with a book-like form factor and look-and-feel. It is concerned with producing a document that is easily read by machines, but also intelligently typeset for humans.
+
+An example: http://wilkie.github.com/gutenberg/example.html
 
 ## Installation
 
@@ -18,7 +20,7 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+    gutenberg example.yml
 
 ## Contributing
 
