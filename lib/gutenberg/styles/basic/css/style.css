@@ -12,6 +12,12 @@ div.page {
   color: black;
   margin-bottom: 10px;
 }
+div.image .caption {
+  font-family: "Oxygen", sans-serif;
+  font-size: 12px;
+  padding-top: 5px;
+  line-height: 14px;
+}
 div.page div.footer {
   text-align: center;
 }
