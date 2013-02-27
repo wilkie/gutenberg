@@ -12,12 +12,6 @@ div.page {
   color: black;
   margin-bottom: 10px;
 }
-div.image .caption {
-  font-family: "Oxygen", sans-serif;
-  font-size: 12px;
-  padding-top: 5px;
-  line-height: 14px;
-}
 div.page div.footer {
   text-align: center;
 }
@@ -153,6 +147,23 @@ figure.table table tr td.bottom_border_single {
   border-bottom: 1px solid black;
 }
 
+figure.image {
+  padding: 30px;
+  text-align:center;
+}
+figure.image img {
+  background-color: #c0c0c0;
+  border: 1px solid #555;
+  border-radius: 10px;
+  box-shadow 0px 0px 2px 1px #333;
+}
+figure.image figcaption {
+  font-family: "Oxygen", sans-serif;
+  font-size: 12px;
+  padding-top: 5px;
+  line-height: 14px;
+}
+
 div.inset {
   width: 500px;
   background-color: #c0c0c0;
@@ -163,16 +174,6 @@ div.inset {
   padding: 10px;
   min-height: 40px;
   border-radius: 12px;
-}
-div.image {
-  padding: 30px;
-  text-align:center;
-}
-div.image img {
-  background-color: #c0c0c0;
-  border: 1px solid #555;
-  border-radius: 10px;
-  box-shadow 0px 0px 2px 1px #333;
 }
 div.inset img {
   width: 40px;

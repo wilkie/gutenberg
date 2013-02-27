@@ -155,6 +155,10 @@ describe Gutenberg::MarkdownRenderer do
   end
 
   describe "#image" do
+    it "generates the img tag within a figure tag" do
+      @renderer.image("link", "title", "alt_text").must_match /<figure\s.*class=['"]image['"]><img\s.*src=['"]link['"][ >]/
+    end
+
     it "generates a img tag with the link as the src" do
       @renderer.image("link", "title", "alt_text").must_match /<img\s.*src=['"]link['"][ >]/
     end
@@ -172,11 +176,11 @@ describe Gutenberg::MarkdownRenderer do
     end
 
     it "generates a caption div when a title is given" do
-      @renderer.image("link", "title", "alt_text").must_match /<div\s.*class=['"]caption['"].*?>title</
+      @renderer.image("link", "title", "alt_text").must_match /<figcaption>title</
     end
 
     it "does not generate a caption div when a title is not given" do
-      @renderer.image("link", "", "alt_text").wont_match /<div\s.*class=['"]caption['"].*?>title</
+      @renderer.image("link", "", "alt_text").wont_match /<figcaption>/
     end
 
     describe "when given a youtube link" do
@@ -197,12 +201,12 @@ describe Gutenberg::MarkdownRenderer do
 
       it "generates a caption div when a title is given" do
         @renderer.image("http://www.youtube.com/watch?v=fzlHs0UNmDY",
-                        "title", "alt_text").must_match /<div\s.*class=['"]caption['"].*?>title</
+                        "title", "alt_text").must_match /<figcaption>title</
       end
 
       it "does not generate a caption div when a title is not given" do
         @renderer.image("http://www.youtube.com/watch?v=fzlHs0UNmDY",
-                        "", "alt_text").wont_match /<div\s.*class=['"]caption['"].*?>title</
+                        "", "alt_text").wont_match /<figcaption>title</
       end
     end
   end

@@ -126,11 +126,11 @@ module Gutenberg
       if link.match "http[s]?://(www.)?youtube.com"
         # embed the youtube link
         youtube_hash = link.match("youtube.com/.*=(.*)$")[1]
-        img_source = "<div class='youtube'><div class='youtube_fixture'><img src='/images/youtube_placeholder.png' /><iframe class='youtube_frame' longdesc='#{alt_text}' src='http://www.youtube.com/embed/#{youtube_hash}'>#{alt_text}</iframe></div></div>"
+        img_source = "<figure class='youtube'><div class='youtube_fixture'><img src='/images/youtube_placeholder.png' /><iframe class='youtube_frame' longdesc='#{alt_text}' src='http://www.youtube.com/embed/#{youtube_hash}'>#{alt_text}</iframe></div></figure>"
       end
 
-      caption = "<br /><div class='caption'>#{caption}</div>" unless caption == ""
-      "<div class='image'>#{img_source}#{caption}</div>\n\n"
+      caption = "<br /><figcaption>#{caption}</figcaption>" unless caption == ""
+      "<figure class='image'>#{img_source}#{caption}</figure>\n\n"
     end
 
     # Generates HTML for a markdown header.
