@@ -61,6 +61,8 @@ module Gutenberg
     def parse_table(text)
       return if text.empty? or not text.lines.first.start_with?("!table")
       caption = text.lines.first[6..-1].strip
+      caption = caption[6..-1].strip if caption.start_with? '&quot;'
+      caption = caption[0..-7].strip if caption.end_with? '&quot;'
       table_renderer = Gutenberg::TableRenderer.new
 
       table_renderer.parse_block(text).caption = ""
