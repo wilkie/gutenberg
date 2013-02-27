@@ -115,6 +115,44 @@ blockquote img {
   float: left;
   margin-right: 13px;
 }
+
+figure.table {
+  text-align: center;
+  padding: 30px;
+  text-align:center;
+}
+figure.table table {
+  margin-left: auto;
+  margin-right: auto;
+}
+figure.table figcaption {
+  margin-top: 10px;
+}
+figure.table table tr td {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+figure.table table tr td.left_border {
+  border-left: 1px solid black;
+}
+figure.table table tr td.right_border {
+  border-right: 1px solid black;
+}
+figure.table table tr td.top_border_double {
+  border-top: 3px double black;
+}
+figure.table table tr td.top_border_single {
+  border-top: 1px solid black;
+}
+figure.table table tr td.bottom_border_double {
+  border-bottom: 3px double black;
+}
+figure.table table tr td.bottom_border_single {
+  border-bottom: 1px solid black;
+}
+
 div.inset {
   width: 500px;
   background-color: #c0c0c0;
@@ -126,43 +164,10 @@ div.inset {
   min-height: 40px;
   border-radius: 12px;
 }
-div.table {
-  padding: 30px;
-  text-align:center;
-}
 div.image {
   padding: 30px;
   text-align:center;
 }
-div.table table {
-  margin-left: auto;
-  margin-right: auto;
-}
-div.table table tr td {
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-top: 5px;
-  padding-bottom: 5px;
-}
-div.table table tr td.left_border {
-  border-left: 1px solid black;
-}
-div.table table tr td.right_border {
-  border-right: 1px solid black;
-}
-div.table table tr td.top_border_double {
-  border-top: 3px double black;
-}
-div.table table tr td.top_border_single {
-  border-top: 1px solid black;
-}
-div.table table tr td.bottom_border_double {
-  border-bottom: 3px double black;
-}
-div.table table tr td.bottom_border_single {
-  border-bottom: 1px solid black;
-}
-
 div.image img {
   background-color: #c0c0c0;
   border: 1px solid #555;
@@ -183,10 +188,10 @@ div.inset p {
   list-style-type: square;
   list-style-position: inside;
 }
-
 .acknowledgements ul li {
   margin-bottom: 10px;
 }
+
 pre {
   margin-top: 15px;
   margin-bottom: 15px;
@@ -204,7 +209,6 @@ pre {
 pre code {
 	font-size: 15px;
 }
-
 code {
 	font-family: 'Inconsolata', monospace;
 }

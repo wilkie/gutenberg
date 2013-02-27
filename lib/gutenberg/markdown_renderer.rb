@@ -59,9 +59,12 @@ module Gutenberg
 
     # Parses a table.
     def parse_table(text)
+      return if text.empty? or not text.lines.first.start_with?("!table")
+      caption = text.lines.first[6..-1].strip
       table_renderer = Gutenberg::TableRenderer.new
 
-      "<div class='table'>\n#{table_renderer.parse_block(text).to_html}</div>"
+      table_renderer.parse_block(text).caption = ""
+      "<figure class='table'>\n#{table_renderer.to_html}<figcaption>#{caption}</figcaption></figure>"
     end
 
     # Generates HTML for markdown blockquotes.
