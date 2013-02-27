@@ -27,6 +27,7 @@ module Gutenberg
       end
     end
 
+    # Copies the assets required for the given book to the given output path.
     def copy(book, to)
       book.style.copy(to)
     end

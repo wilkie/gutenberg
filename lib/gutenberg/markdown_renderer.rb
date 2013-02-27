@@ -1,4 +1,5 @@
 require 'gutenberg/node'
+require 'gutenberg/table_renderer'
 
 module Gutenberg
   require 'redcarpet'
@@ -32,18 +33,35 @@ module Gutenberg
 
     # Generates HTML for a markdown paragraph.
     def paragraph(text)
+      # Determine if this text represents a table
+      if text.start_with? '!table'
+        return parse_table(text)
+      end
+
+      # Don't parse html tags
       if text.start_with? "<"
         return text
       end
 
+      # Find directive
       match = text.match /^!([^ ]+)\s(.*)/
+
+      directive = match[1] if match
       text = match[2] if match
       text = text.split(' ').map{|word| @hyphenator.visualize(word, "&shy;")}.join(' ')
-      if match
-        "<div class='inset #{match[1]}'><img src='#{@style.image_for(match[1])}' /><p>#{text}</p></div>\n\n"
+
+      if directive
+        "<div class='inset #{directive}'><img src='#{@style.image_for(directive)}' /><p>#{text}</p></div>\n\n"
       else
         "<p>#{text}</p>\n\n"
       end
+    end
+
+    # Parses a table.
+    def parse_table(text)
+      table_renderer = Gutenberg::TableRenderer.new
+
+      "<div class='table'>\n#{table_renderer.parse_block(text).to_html}</div>"
     end
 
     # Generates HTML for markdown blockquotes.

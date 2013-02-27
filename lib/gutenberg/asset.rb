@@ -72,6 +72,7 @@ module Gutenberg
       end
     end
 
+    # Copies the asset to the given path.
     def copy(to)
       subpath = File.basename @path.chomp(File.basename(@path))
       FileUtils.mkdir_p "#{to}/#{subpath}"

@@ -65,10 +65,12 @@ module Gutenberg
       @name = name
     end
 
+    # Returns the image location for the given image tag.
     def image_for(type)
       @images[type]
     end
 
+    # Copies the assets to the given path.
     def copy(to)
       @assets.each do |a|
         a.copy(to)

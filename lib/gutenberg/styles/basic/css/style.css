@@ -126,10 +126,43 @@ div.inset {
   min-height: 40px;
   border-radius: 12px;
 }
+div.table {
+  padding: 30px;
+  text-align:center;
+}
 div.image {
   padding: 30px;
   text-align:center;
 }
+div.table table {
+  margin-left: auto;
+  margin-right: auto;
+}
+div.table table tr td {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+div.table table tr td.left_border {
+  border-left: 1px solid black;
+}
+div.table table tr td.right_border {
+  border-right: 1px solid black;
+}
+div.table table tr td.top_border_double {
+  border-top: 3px double black;
+}
+div.table table tr td.top_border_single {
+  border-top: 1px solid black;
+}
+div.table table tr td.bottom_border_double {
+  border-bottom: 3px double black;
+}
+div.table table tr td.bottom_border_single {
+  border-bottom: 1px solid black;
+}
+
 div.image img {
   background-color: #c0c0c0;
   border: 1px solid #555;
