@@ -7,7 +7,7 @@ describe Gutenberg::MarkdownRenderer do
     @style.stubs(:image_for).returns("image")
     @hyphen = mock('hyphen')
     Text::Hyphen.stubs(:new).returns(@hyphen)
-    @renderer = Gutenberg::MarkdownRenderer.new("slug", "Slug", "en_us", @style)
+    @renderer = Gutenberg::MarkdownRenderer.new("slug", "Foo", "en_us", @style)
   end
 
   describe "#title" do
@@ -156,7 +156,11 @@ describe Gutenberg::MarkdownRenderer do
 
   describe "#image" do
     it "generates the img tag within a figure tag" do
-      @renderer.image("link", "title", "alt_text").must_match /<figure\s.*class=['"]image['"]><img\s.*src=['"]link['"][ >]/
+      @renderer.image("link", "title", "alt_text").must_match /<figure\s.*class=['"]image['"][^>]*><img\s.*src=['"]link['"][ >]/
+    end
+
+    it "generates the img tag with an id containing slug" do
+      @renderer.image("link", "title", "alt_text").must_match /<figure[^>]*?id=['"]figure-slug-1['"]/
     end
 
     it "generates a img tag with the link as the src" do
@@ -176,7 +180,7 @@ describe Gutenberg::MarkdownRenderer do
     end
 
     it "generates a caption div when a title is given" do
-      @renderer.image("link", "title", "alt_text").must_match /<figcaption>title</
+      @renderer.image("link", "title", "alt_text").must_match /<figcaption><strong>Figure 1<\/strong>: title</
     end
 
     it "does not generate a caption div when a title is not given" do
@@ -201,12 +205,12 @@ describe Gutenberg::MarkdownRenderer do
 
       it "generates a caption div when a title is given" do
         @renderer.image("http://www.youtube.com/watch?v=fzlHs0UNmDY",
-                        "title", "alt_text").must_match /<figcaption>title</
+                        "title", "alt_text").must_match /<figcaption><strong>Figure 1<\/strong>: title</
       end
 
       it "does not generate a caption div when a title is not given" do
         @renderer.image("http://www.youtube.com/watch?v=fzlHs0UNmDY",
-                        "", "alt_text").wont_match /<figcaption>title</
+                        "", "alt_text").wont_match /<figcaption>/
       end
     end
   end

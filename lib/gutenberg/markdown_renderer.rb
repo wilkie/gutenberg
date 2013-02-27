@@ -28,6 +28,9 @@ module Gutenberg
       @slug = slug
       @hyphenator = Text::Hyphen.new(:language => language)
       @style = style
+
+      @figure_count = 0
+      @table_count = 0
       super *args
     end
 
@@ -66,7 +69,9 @@ module Gutenberg
       table_renderer = Gutenberg::TableRenderer.new
 
       table_renderer.parse_block(text).caption = ""
-      "<figure class='table'>\n#{table_renderer.to_html}<figcaption>#{caption}</figcaption></figure>"
+
+      @table_count += 1
+      "<figure class='table' id='table-#{@slug}-#{@table_count}'>\n#{table_renderer.to_html}<figcaption><strong>Table #{@table_count}</strong>: #{caption}</figcaption></figure>"
     end
 
     # Generates HTML for markdown blockquotes.
@@ -115,7 +120,7 @@ module Gutenberg
         new_code << l
       end
       "<pre><code>#{language}#{new_code}</code></pre>"
-    end
+  end
 
     # Generates HTML for a markdown image.
     def image(link, title, alt_text)
@@ -131,8 +136,9 @@ module Gutenberg
         img_source = "<figure class='youtube'><div class='youtube_fixture'><img src='/images/youtube_placeholder.png' /><iframe class='youtube_frame' longdesc='#{alt_text}' src='http://www.youtube.com/embed/#{youtube_hash}'>#{alt_text}</iframe></div></figure>"
       end
 
-      caption = "<br /><figcaption>#{caption}</figcaption>" unless caption == ""
-      "<figure class='image'>#{img_source}#{caption}</figure>\n\n"
+      @figure_count += 1
+      caption = "<br /><figcaption><strong>Figure #{@figure_count}</strong>: #{caption}</figcaption>" unless caption == ""
+      "<figure class='image' id='figure-#{@slug}-#{@figure_count}'>#{img_source}#{caption}</figure>\n\n"
     end
 
     # Generates HTML for a markdown header.

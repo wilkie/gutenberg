@@ -1,9 +1,10 @@
-p em {
+em {
   font-style: italic;
 }
-p strong {
+strong {
   font-weight: bold;
 }
+
 div.page {
   width: 600px;
   height: 800px;
