@@ -7,9 +7,13 @@ module Gutenberg
     # The width of the table.
     attr_reader :cols
 
+    # The caption for this table. Defaults to ""
+    attr_accessor :caption
+
     # Creates a renderer that expects rows to be the given width.
     def initialize()
-      @html = "<table>\n"
+      @html = ""
+      @caption = ""
 
       @rows = 0
       @cols = 0
@@ -22,6 +26,7 @@ module Gutenberg
     def parse_block(text)
       text.lines.map(&:strip).each do |line|
         parse_line(line) unless line.start_with? '!table'
+        @caption = line[6..-1].strip if line.start_with? '!table'
       end
       self
     end
@@ -158,7 +163,8 @@ module Gutenberg
     # Yields the html of the table.
     def to_html
       complete_row
-      "#{@html}</table>\n\n"
+      caption = "<caption>#{@caption}</caption>" unless @caption.empty?
+      "<table>\n#{caption}\n#{@html}</table>\n\n"
     end
   end
 end
