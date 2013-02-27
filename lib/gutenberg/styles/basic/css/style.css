@@ -120,7 +120,10 @@ figure.table table {
   margin-right: auto;
 }
 figure.table figcaption {
-  margin-top: 10px;
+  padding-top: 10px;
+  font-family: "Oxygen", sans-serif;
+  font-size: 12px;
+  line-height: 14px;
 }
 figure.table table tr td {
   padding-left: 10px;
@@ -160,8 +163,8 @@ figure.image img {
 figure.image figcaption {
   font-family: "Oxygen", sans-serif;
   font-size: 12px;
-  padding-top: 5px;
   line-height: 14px;
+  padding-top: 5px;
 }
 
 div.inset {
