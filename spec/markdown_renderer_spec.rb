@@ -250,4 +250,18 @@ describe Gutenberg::MarkdownRenderer do
       @renderer.lookup("bar").must_equal nil
     end
   end
+
+  describe "#images" do
+    it "contains an image when an image is parsed without a tag" do
+      @renderer.image("link", "title", "alt_text")
+      @renderer.images.count.must_equal 1
+      @renderer.images.first[:slug].must_equal "figure-slug-1"
+    end
+
+    it "contains an image when an image is parsed with a tag" do
+      @renderer.image("foo@link", "title", "alt_text")
+      @renderer.images.count.must_equal 1
+      @renderer.images.first[:slug].must_equal "figure-slug-1"
+    end
+  end
 end

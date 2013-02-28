@@ -28,6 +28,9 @@ module Gutenberg
     # The index of this chapter. Default: ""
     attr_reader :index
 
+    # The images contained in this chapter. Default: []
+    attr_reader :images
+
     # The language this chapter is written in. Default: "en_us"
 
     # Creates a new representation of a Chapter where options may be specified:
@@ -45,6 +48,7 @@ module Gutenberg
     #                  the index is given as an empty string. (default: "")
     def initialize(options = {})
       @format = options[:format] || :text
+      @images = []
 
       # Look for and load any special files
       if options[:markdown_file]
@@ -106,6 +110,9 @@ module Gutenberg
 
         # title can be inferred from markdown
         options[:title] = options[:title] || renderer.title
+
+        # Get the image list
+        @images = renderer.images
       when :html
         @html = @content
       else

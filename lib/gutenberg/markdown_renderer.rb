@@ -19,6 +19,9 @@ module Gutenberg
     # content.
     attr_reader :title
 
+    # The images contained within this chapter. Default: []
+    attr_reader :images
+
     # Creates a new renderer that can be given to Redcarpet. It expects to
     # receive a slug to use as a safe anchor and the chapter name in case a
     # primary header is not used. The name is overriden by a primary header.
@@ -26,6 +29,7 @@ module Gutenberg
     # of this chapter. It can be a string to indicate roman numerals. It can
     # be an empty string whenever it is meant to be omitted.
     def initialize(slug, name, language, style, index, *args)
+      @images = []
       @outline = Node.new(name || "Untitled")
       @last = @outline
       @slug = slug
@@ -175,6 +179,8 @@ module Gutenberg
                       :index      => @figure_count,
                       :caption    => caption,
                       :full_index => "#{@index}-#{@figure_count}"}
+
+      @images << @lookup[tag]
 
       caption = "<br /><figcaption><strong>Figure #{@index.empty? ? "" : "#{@index}-"}#{@figure_count}</strong>: #{caption}</figcaption>" unless caption == ""
       "<figure class='image' id='#{id}'>#{img_source}#{caption}</figure>\n\n"

@@ -50,6 +50,7 @@ describe Gutenberg::Chapter do
         @md_renderer = mock('md_renderer')
         @md_renderer.stubs(:title).returns("")
         @md_renderer.stubs(:outline).returns(nil)
+        @md_renderer.stubs(:images).returns([])
         Gutenberg::MarkdownRenderer.stubs(:new).returns(@md_renderer)
 
         @renderer = mock('renderer')
@@ -61,6 +62,11 @@ describe Gutenberg::Chapter do
 
         # default to yaml not parsing anything
         YAML.stubs(:load).returns({})
+      end
+
+      it "pulls the images from the markdown renderer" do
+        @md_renderer.expects(:images).returns([])
+        Gutenberg::Chapter.new(:markdown_file => "foo.md")
       end
 
       it "makes use of the custom renderer" do
@@ -121,6 +127,7 @@ describe Gutenberg::Chapter do
         File.stubs(:read).returns("---\nauthors: ['foo']\n---\nblah")
         md_renderer = mock('md_renderer')
         md_renderer.stubs(:title).returns("hello")
+        md_renderer.stubs(:images).returns([])
         md_renderer.stubs(:outline).returns(nil)
         Gutenberg::MarkdownRenderer.stubs(:new).returns(md_renderer)
         Gutenberg::Chapter.new(:markdown_file => "foo.md").title.must_equal("hello")
