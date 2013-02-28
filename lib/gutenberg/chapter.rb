@@ -7,23 +7,26 @@ module Gutenberg
     require 'babosa'
 
     # The title of the chapter. Default: "Untitled"
-    attr_accessor :title
+    attr_reader :title
 
     # The list of authors responsible for this chapter. Default: []
-    attr_accessor :authors
+    attr_reader :authors
 
     # The friendly identifier for this chapter: Default: "chapter"
-    attr_accessor :slug
+    attr_reader :slug
 
     # The content of this chapter in a raw format. Default: ""
-    attr_accessor :content
+    attr_reader :content
 
     # The content of this chapter rendered in html. Default: ""
-    attr_accessor :html
+    attr_reader :html
 
     # The outline of this chapter. This gives the root node of the document
     # tree.
-    attr_accessor :outline
+    attr_reader :outline
+
+    # The index of this chapter. Default: ""
+    attr_reader :index
 
     # The language this chapter is written in. Default: "en_us"
 
@@ -36,20 +39,25 @@ module Gutenberg
     # :slug          - the slug to identify this chapter (default: inferred from title)
     # :language      - the language this chapter is written in (default: en_us)
     # :style         - the Gutenberg::Style class to use to render the content
+    # :index         - the numerical representation of the chapter. This will precede
+    #                  things such as figure captions. If the index is "3" then, figures
+    #                  will be listed as 3-1, then 3-2, etc. This will be omitted when
+    #                  the index is given as an empty string. (default: "")
     def initialize(options = {})
       @format = options[:format] || :text
 
+      # Look for and load any special files
       if options[:markdown_file]
-        options[:slug] = options[:slug] || options[:markdown_file].gsub(/.md$/, "").to_slug.normalize.to_s
+        options[:slug] ||= options[:markdown_file].gsub(/.md$/, "").to_slug.normalize.to_s
 
         # Will throw on error
-        options[:content] = options[:content] || File.read(options[:markdown_file])
+        options[:content] ||= File.read(options[:markdown_file])
 
         @format = :markdown
       end
 
-      options[:content]  = options[:content]  || ""
-      options[:language] = options[:language] || "en_us"
+      # In case we don't have any content... default to empty
+      options[:content] ||= ""
 
       # Grab metadata from content
       match = options[:content].match(/^---$(.*?)^---$(.*)/m)
@@ -60,23 +68,41 @@ module Gutenberg
 
         meta_data = YAML.load(meta_data)
 
-        options[:title]    = options[:title]    || meta_data["title"]
-        options[:authors]  = options[:authors]  || meta_data["authors"]
-        options[:scripts]  = options[:scripts]  || meta_data["scripts"]
-        options[:summary]  = options[:summary]  || meta_data["summary"]
-        options[:language] = options[:language] || meta_data["language"]
+        options[:title]    ||= meta_data["title"]
+        options[:authors]  ||= meta_data["authors"]
+        options[:scripts]  ||= meta_data["scripts"]
+        options[:summary]  ||= meta_data["summary"]
+        options[:language] ||= meta_data["language"]
+        options[:index]      = meta_data["index"] if meta_data["index"]
       end
+
+      options[:language] ||= "en_us"
+      options[:index]    ||= ""
 
       case @format
       when :markdown
         renderer = Gutenberg::MarkdownRenderer.new(options[:slug],
                                                    options[:title],
                                                    options[:language],
-                                                   options[:style])
+                                                   options[:style],
+                                                   options[:index])
         markdown = Redcarpet::Markdown.new(renderer, :fenced_code_blocks => true)
 
         @html = markdown.render(options[:content])
         @outline = renderer.outline;
+
+        # Replace references
+        @html.gsub! /<p>(.*?)<\/p>/ do
+          s = $1.gsub /\@\[([^\]]+)\]/ do
+            data = renderer.lookup($1)
+            if data
+              "<a href='##{data[:slug]}'>#{data[:full_index]}</a>"
+            else
+              $&
+            end
+          end
+          "<p>#{s}</p>"
+        end if @html
 
         # title can be inferred from markdown
         options[:title] = options[:title] || renderer.title
@@ -91,6 +117,7 @@ module Gutenberg
       @slug     = options[:slug]    || "chapter"
       @content  = options[:content] || ""
       @language = options[:language]
+      @index    = options[:index]
     end
   end
 end

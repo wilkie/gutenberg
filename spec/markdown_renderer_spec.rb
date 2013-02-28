@@ -7,7 +7,7 @@ describe Gutenberg::MarkdownRenderer do
     @style.stubs(:image_for).returns("image")
     @hyphen = mock('hyphen')
     Text::Hyphen.stubs(:new).returns(@hyphen)
-    @renderer = Gutenberg::MarkdownRenderer.new("slug", "Foo", "en_us", @style)
+    @renderer = Gutenberg::MarkdownRenderer.new("slug", "Foo", "en_us", @style, "")
   end
 
   describe "#title" do
@@ -22,6 +22,11 @@ describe Gutenberg::MarkdownRenderer do
     it "runs text through text-hyphen" do
       @hyphen.expects(:visualize).with("hello", "&shy;")
       @renderer.paragraph("hello")
+    end
+
+    it "does not run @[] blocks through text-hyphen" do
+      @hyphen.expects(:visualize).with("hello", "&shy;").never
+      @renderer.paragraph("@[hello]")
     end
 
     it "runs text through text-hyphen when paragraph starts with !" do
@@ -79,7 +84,7 @@ describe Gutenberg::MarkdownRenderer do
     end
 
     it "returns a default node for the content when not given a name" do
-      renderer = Gutenberg::MarkdownRenderer.new("slug", nil, "en_us", @style)
+      renderer = Gutenberg::MarkdownRenderer.new("slug", nil, "en_us", @style, "")
       renderer.outline.text = "Untitled"
     end
 
@@ -167,6 +172,10 @@ describe Gutenberg::MarkdownRenderer do
       @renderer.image("link", "title", "alt_text").must_match /<img\s.*src=['"]link['"][ >]/
     end
 
+    it "generates a img tag with the link as the src and ignores the reference tag" do
+      @renderer.image("tag@link", "title", "alt_text").must_match /<img\s.*src=['"]link['"][ >]/
+    end
+
     it "generates a img tag with the alt given as an attribute" do
       @renderer.image("link", "title", "alt_text").must_match /<img\s.*alt=['"]alt_text['"][ >]/
     end
@@ -181,6 +190,11 @@ describe Gutenberg::MarkdownRenderer do
 
     it "generates a caption div when a title is given" do
       @renderer.image("link", "title", "alt_text").must_match /<figcaption><strong>Figure 1<\/strong>: title</
+    end
+
+    it "generates a caption div with the chapter index when one is provided" do
+      renderer = Gutenberg::MarkdownRenderer.new("slug", "Foo", "en_us", @style, "V")
+      renderer.image("link", "title", "alt_text").must_match /<figcaption><strong>Figure V-1<\/strong>: title</
     end
 
     it "does not generate a caption div when a title is not given" do
@@ -212,6 +226,28 @@ describe Gutenberg::MarkdownRenderer do
         @renderer.image("http://www.youtube.com/watch?v=fzlHs0UNmDY",
                         "", "alt_text").wont_match /<figcaption>/
       end
+    end
+  end
+
+  describe "#lookup" do
+    it "uses the tag for an image link as a reference" do
+      @renderer.image("tag@link", "", "alt_text")
+      @renderer.lookup("tag")[:slug].must_equal "figure-slug-1"
+    end
+
+    it "uses the tag for a youtube link as a reference" do
+      @renderer.image("tag@http://www.youtube.com/watch?v=fzlHs0UNmDY", "title", "alt_text")
+      @renderer.lookup("tag")[:slug].must_equal "figure-slug-1"
+    end
+
+    it "uses the base filename for an image link as a reference" do
+      @renderer.image("foo/bar/baz/link.png", "title", "alt_text")
+      @renderer.lookup("link")[:slug].must_equal "figure-slug-1"
+    end
+
+    it "returns nil when a tag does not exist" do
+      @renderer.image("foo@bar", "title", "alt_text")
+      @renderer.lookup("bar").must_equal nil
     end
   end
 end

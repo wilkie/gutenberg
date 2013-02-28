@@ -22,15 +22,21 @@ module Gutenberg
     # Creates a new renderer that can be given to Redcarpet. It expects to
     # receive a slug to use as a safe anchor and the chapter name in case a
     # primary header is not used. The name is overriden by a primary header.
-    def initialize(slug, name, language, style, *args)
+    # It can receive an index that is used to indicate the chapter number
+    # of this chapter. It can be a string to indicate roman numerals. It can
+    # be an empty string whenever it is meant to be omitted.
+    def initialize(slug, name, language, style, index, *args)
       @outline = Node.new(name || "Untitled")
       @last = @outline
       @slug = slug
       @hyphenator = Text::Hyphen.new(:language => language)
       @style = style
+      @index = index.to_s || ""
 
       @figure_count = 0
       @table_count = 0
+
+      @lookup = {}
       super *args
     end
 
@@ -51,7 +57,13 @@ module Gutenberg
 
       directive = match[1] if match
       text = match[2] if match
-      text = text.split(' ').map{|word| @hyphenator.visualize(word, "&shy;")}.join(' ')
+      text = text.split(' ').map do |word|
+        if word.start_with? '@[' and word.end_with? ']'
+          word
+        else
+          @hyphenator.visualize(word, "&shy;")
+        end
+      end.join(' ')
 
       if directive
         "<div class='inset #{directive}'><img src='#{@style.image_for(directive)}' /><p>#{text}</p></div>\n\n"
@@ -64,14 +76,26 @@ module Gutenberg
     def parse_table(text)
       return if text.empty? or not text.lines.first.start_with?("!table")
       caption = text.lines.first[6..-1].strip
+      tag = ""
+      unless caption.start_with?('&quot;') or not caption.include?(' ')
+        tag, caption = caption.split(' ', 2)
+      end
       caption = caption[6..-1].strip if caption.start_with? '&quot;'
       caption = caption[0..-7].strip if caption.end_with? '&quot;'
       table_renderer = Gutenberg::TableRenderer.new
 
       table_renderer.parse_block(text).caption = ""
 
+      # Determine figure slug
       @table_count += 1
-      "<figure class='table' id='table-#{@slug}-#{@table_count}'>\n#{table_renderer.to_html}<figcaption><strong>Table #{@table_count}</strong>: #{caption}</figcaption></figure>"
+      id = "table-#{@slug}-#{@table_count}"
+
+      # Add slug to reference lookup
+      @lookup[tag] = {:slug       => id,
+                      :index      => @table_count,
+                      :caption    => caption,
+                      :full_index => "#{@index}-#{@table_count}"}
+      "<figure class='table' id='#{id}'>\n#{table_renderer.to_html}<figcaption><strong>Table #{@index}-#{@table_count}</strong>: #{caption}</figcaption></figure>"
     end
 
     # Generates HTML for markdown blockquotes.
@@ -124,9 +148,15 @@ module Gutenberg
 
     # Generates HTML for a markdown image.
     def image(link, title, alt_text)
-      caption = ""
       caption = title
       title = Nokogiri::HTML(title).xpath("//text()").remove
+
+      tag = ""
+      if link.include? '@'
+        tag, link = link.split('@')
+      else
+        tag = File.basename(link.chomp(File.extname(link)))
+      end
 
       img_source = "<img src='#{link}' title='#{title}' alt='#{alt_text}' />"
 
@@ -136,9 +166,18 @@ module Gutenberg
         img_source = "<figure class='youtube'><div class='youtube_fixture'><img src='/images/youtube_placeholder.png' /><iframe class='youtube_frame' longdesc='#{alt_text}' src='http://www.youtube.com/embed/#{youtube_hash}'>#{alt_text}</iframe></div></figure>"
       end
 
+      # Determine figure slug
       @figure_count += 1
-      caption = "<br /><figcaption><strong>Figure #{@figure_count}</strong>: #{caption}</figcaption>" unless caption == ""
-      "<figure class='image' id='figure-#{@slug}-#{@figure_count}'>#{img_source}#{caption}</figure>\n\n"
+      id = "figure-#{@slug}-#{@figure_count}"
+
+      # Add slug to reference lookup
+      @lookup[tag] = {:slug       => id,
+                      :index      => @figure_count,
+                      :caption    => caption,
+                      :full_index => "#{@index}-#{@figure_count}"}
+
+      caption = "<br /><figcaption><strong>Figure #{@index.empty? ? "" : "#{@index}-"}#{@figure_count}</strong>: #{caption}</figcaption>" unless caption == ""
+      "<figure class='image' id='#{id}'>#{img_source}#{caption}</figure>\n\n"
     end
 
     # Generates HTML for a markdown header.
@@ -161,6 +200,11 @@ module Gutenberg
       @last = new_node
 
       "<h#{header_level} id='#{new_node.slug}'>#{text}</h#{header_level}>\n\n"
+    end
+
+    # Retrieve the slug that identifies the given reference.
+    def lookup(reference)
+      @lookup[reference]
     end
   end
 end

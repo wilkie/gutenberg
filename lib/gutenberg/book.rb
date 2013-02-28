@@ -56,8 +56,8 @@ module Gutenberg
       chapters = options[:chapters] || []
 
       @chapters = []
-      chapters.each do |c|
-        @chapters << Chapter.new(:markdown_file => c, :style => @style)
+      chapters.each_with_index do |c,i|
+        @chapters << Chapter.new(:markdown_file => c, :style => @style, :index => i+1)
       end
     end
   end
