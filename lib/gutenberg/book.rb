@@ -22,6 +22,9 @@ module Gutenberg
     # Whether or not the table of contents is displayed. Default: false
     attr_reader :toc
 
+    # The images used throughout the book.
+    attr_reader :images
+
     # Will create the book class and organize all metadata. Can be passed the
     # following options:
     # :yaml    - the filename of YAML that describes the book
@@ -55,9 +58,12 @@ module Gutenberg
 
       chapters = options[:chapters] || []
 
+      @images   = []
       @chapters = []
       chapters.each_with_index do |c,i|
-        @chapters << Chapter.new(:markdown_file => c, :style => @style, :index => i+1)
+        chapter = Chapter.new(:markdown_file => c, :style => @style, :index => i+1)
+        @chapters << chapter
+        @images.concat chapter.images
       end
     end
   end

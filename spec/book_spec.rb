@@ -4,6 +4,8 @@ require_relative '../lib/gutenberg/book.rb'
 describe Gutenberg::Book do
   before do
     Gutenberg::Style.stubs(:new).returns(mock('style'))
+    @chapter = mock('chapter')
+    @chapter.stubs(:images).returns([])
   end
 
   it "can be created with no arguments" do
@@ -52,8 +54,8 @@ describe Gutenberg::Book do
 
   it "chapters can be pulled from yaml" do
     YAML.stubs(:load_file).returns({"chapters" => ["foo"]})
-    Gutenberg::Chapter.expects(:new).with(has_entry(:markdown_file, "foo")).returns("CHAPTER")
-    Gutenberg::Book.new({:yaml => "test.yaml"}).chapters.must_equal(["CHAPTER"])
+    Gutenberg::Chapter.expects(:new).with(has_entry(:markdown_file, "foo")).returns(@chapter)
+    Gutenberg::Book.new({:yaml => "test.yaml"}).chapters.must_equal([@chapter])
   end
 
   it "has a reasonable default title" do
@@ -126,8 +128,8 @@ describe Gutenberg::Book do
 
   it "can override the chapters that are specified in yaml" do
     YAML.stubs(:load_file).returns({"chapters" => ["foo"]})
-    Gutenberg::Chapter.expects(:new).with(has_entry(:markdown_file, "bar")).returns("CHAPTER")
-    Gutenberg::Book.new({:yaml => "test.yaml", :chapters => ["bar"]}).chapters.must_equal(["CHAPTER"])
+    Gutenberg::Chapter.expects(:new).with(has_entry(:markdown_file, "bar")).returns(@chapter)
+    Gutenberg::Book.new({:yaml => "test.yaml", :chapters => ["bar"]}).chapters.must_equal([@chapter])
   end
 
   it "creates a Chapter object for a listed chapter" do
@@ -138,8 +140,19 @@ describe Gutenberg::Book do
   end
 
   it "passes the style to the Chapter objects" do
-    Gutenberg::Chapter.expects(:new).with(has_entry(:style, "foo")).returns("CHAPTER")
+    Gutenberg::Chapter.expects(:new).with(has_entry(:style, "foo")).returns(@chapter)
     Gutenberg::Style.stubs(:new).returns("foo")
     Gutenberg::Book.new(:chapters => ["foo"], :style => "pretty")
+  end
+
+  it "combines all images from all chapters into images property" do
+    chapter_1 = mock('chapter')
+    chapter_2 = mock('chapter')
+    chapter_1.stubs(:images).returns(["foo", "bar"])
+    chapter_2.stubs(:images).returns(["baz", "caz"])
+    Gutenberg::Chapter.expects(:new).with(has_entry(:markdown_file, "foo")).returns(chapter_1)
+    Gutenberg::Chapter.expects(:new).with(has_entry(:markdown_file, "boo")).returns(chapter_2)
+    Gutenberg::Book.new({:chapters => ["foo", "boo"]})
+      .images.must_equal ["foo", "bar", "baz", "caz"]
   end
 end
