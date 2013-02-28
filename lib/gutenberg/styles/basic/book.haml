@@ -9,6 +9,16 @@
 - book.chapters.each do |c|
   !=c.html
 
+%h1#table-of-figures
+  Table of Figures
+%div.tof
+  %ul
+    - book.images.each do |i|
+      %li<
+        %a{:href=>"##{i[:slug]}"}<
+          Figure #{i[:full_index]}
+        \: #{i[:caption]}
+
 %h1#acknowledgements
   Acknowledgements
 %div.acknowledgements
