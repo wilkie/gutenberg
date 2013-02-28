@@ -25,6 +25,9 @@ module Gutenberg
     # The images used throughout the book.
     attr_reader :images
 
+    # The tables used throughout the book.
+    attr_reader :tables
+
     # Will create the book class and organize all metadata. Can be passed the
     # following options:
     # :yaml    - the filename of YAML that describes the book
@@ -59,11 +62,13 @@ module Gutenberg
       chapters = options[:chapters] || []
 
       @images   = []
+      @tables   = []
       @chapters = []
       chapters.each_with_index do |c,i|
         chapter = Chapter.new(:markdown_file => c, :style => @style, :index => i+1)
         @chapters << chapter
         @images.concat chapter.images
+        @tables.concat chapter.tables
       end
     end
   end

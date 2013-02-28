@@ -264,4 +264,18 @@ describe Gutenberg::MarkdownRenderer do
       @renderer.images.first[:slug].must_equal "figure-slug-1"
     end
   end
+
+  describe "#tables" do
+    it "contains a table when the table is parsed without a tag" do
+      @renderer.parse_table("!table \"foo\"")
+      @renderer.tables.count.must_equal 1
+      @renderer.tables.first[:slug].must_equal "table-slug-1"
+    end
+
+    it "contains a table when the table is parsed with a tag" do
+      @renderer.parse_table("!table tag \"foo\"")
+      @renderer.tables.count.must_equal 1
+      @renderer.tables.first[:slug].must_equal "table-slug-1"
+    end
+  end
 end

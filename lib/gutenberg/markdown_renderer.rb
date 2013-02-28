@@ -22,6 +22,9 @@ module Gutenberg
     # The images contained within this chapter. Default: []
     attr_reader :images
 
+    # The tables contained within this chapter. Default: []
+    attr_reader :tables
+
     # Creates a new renderer that can be given to Redcarpet. It expects to
     # receive a slug to use as a safe anchor and the chapter name in case a
     # primary header is not used. The name is overriden by a primary header.
@@ -30,6 +33,7 @@ module Gutenberg
     # be an empty string whenever it is meant to be omitted.
     def initialize(slug, name, language, style, index, *args)
       @images = []
+      @tables = []
       @outline = Node.new(name || "Untitled")
       @last = @outline
       @slug = slug
@@ -94,11 +98,15 @@ module Gutenberg
       @table_count += 1
       id = "table-#{@slug}-#{@table_count}"
 
+      tag = "table-#{@index}-#{@table_count}" if tag == ""
+
       # Add slug to reference lookup
       @lookup[tag] = {:slug       => id,
                       :index      => @table_count,
                       :caption    => caption,
                       :full_index => "#{@index}-#{@table_count}"}
+
+      @tables << @lookup[tag]
       "<figure class='table' id='#{id}'>\n#{table_renderer.to_html}<figcaption><strong>Table #{@index}-#{@table_count}</strong>: #{caption}</figcaption></figure>"
     end
 
@@ -124,7 +132,7 @@ module Gutenberg
 
     # Generates HTML for a markdown code block.
     def block_code(code, language)
-      code = CGI::escapeHTML(code);
+      code = CGI::escapeHTML(code)
       new_code = ""
       last_number = -1
       code.lines do |l|
@@ -148,7 +156,7 @@ module Gutenberg
         new_code << l
       end
       "<pre><code>#{language}#{new_code}</code></pre>"
-  end
+    end
 
     # Generates HTML for a markdown image.
     def image(link, title, alt_text)

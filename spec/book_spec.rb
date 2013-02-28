@@ -6,6 +6,7 @@ describe Gutenberg::Book do
     Gutenberg::Style.stubs(:new).returns(mock('style'))
     @chapter = mock('chapter')
     @chapter.stubs(:images).returns([])
+    @chapter.stubs(:tables).returns([])
   end
 
   it "can be created with no arguments" do
@@ -148,11 +149,26 @@ describe Gutenberg::Book do
   it "combines all images from all chapters into images property" do
     chapter_1 = mock('chapter')
     chapter_2 = mock('chapter')
-    chapter_1.stubs(:images).returns(["foo", "bar"])
-    chapter_2.stubs(:images).returns(["baz", "caz"])
-    Gutenberg::Chapter.expects(:new).with(has_entry(:markdown_file, "foo")).returns(chapter_1)
-    Gutenberg::Chapter.expects(:new).with(has_entry(:markdown_file, "boo")).returns(chapter_2)
+    chapter_1.expects(:images).returns(["foo", "bar"])
+    chapter_2.expects(:images).returns(["baz", "caz"])
+    chapter_1.stubs(:tables).returns([])
+    chapter_2.stubs(:tables).returns([])
+    Gutenberg::Chapter.stubs(:new).with(has_entry(:markdown_file, "foo")).returns(chapter_1)
+    Gutenberg::Chapter.stubs(:new).with(has_entry(:markdown_file, "boo")).returns(chapter_2)
     Gutenberg::Book.new({:chapters => ["foo", "boo"]})
       .images.must_equal ["foo", "bar", "baz", "caz"]
+  end
+
+  it "combines all tables from all chapters into tables property" do
+    chapter_1 = mock('chapter')
+    chapter_2 = mock('chapter')
+    chapter_1.stubs(:images).returns([])
+    chapter_2.stubs(:images).returns([])
+    chapter_1.expects(:tables).returns(["foo", "bar"])
+    chapter_2.expects(:tables).returns(["baz", "caz"])
+    Gutenberg::Chapter.stubs(:new).with(has_entry(:markdown_file, "foo")).returns(chapter_1)
+    Gutenberg::Chapter.stubs(:new).with(has_entry(:markdown_file, "boo")).returns(chapter_2)
+    Gutenberg::Book.new({:chapters => ["foo", "boo"]})
+      .tables.must_equal ["foo", "bar", "baz", "caz"]
   end
 end

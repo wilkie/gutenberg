@@ -19,6 +19,16 @@
           Figure #{i[:full_index]}
         \: #{i[:caption]}
 
+%h1#table-of-tables
+  Table of Tables
+%div.tot
+  %ul
+    - book.tables.each do |i|
+      %li<
+        %a{:href=>"##{i[:slug]}"}<
+          Table #{i[:full_index]}
+        \: #{i[:caption]}
+
 %h1#acknowledgements
   Acknowledgements
 %div.acknowledgements
