@@ -19,6 +19,11 @@ describe Gutenberg::MarkdownRenderer do
   end
 
   describe "#paragraph" do
+    it "should call parse_table when the text starts with the table directive" do
+      @renderer.expects(:parse_table)
+      @renderer.paragraph("!table foo")
+    end
+
     it "runs text through text-hyphen" do
       @hyphen.expects(:visualize).with("hello", "&shy;")
       @renderer.paragraph("hello")
@@ -197,6 +202,12 @@ describe Gutenberg::MarkdownRenderer do
       renderer.image("link", "title", "alt_text").must_match /<figcaption><strong>Figure V-1<\/strong>: title</
     end
 
+    it "generates sequential tags" do
+      renderer = Gutenberg::MarkdownRenderer.new("slug", "Foo", "en_us", @style, "V")
+      renderer.image("link", "title", "alt_text")
+      renderer.image("link", "title", "alt_text").must_match /<figcaption><strong>Figure V-2<\/strong>: title</
+    end
+
     it "does not generate a caption div when a title is not given" do
       @renderer.image("link", "", "alt_text").wont_match /<figcaption>/
     end
@@ -226,6 +237,45 @@ describe Gutenberg::MarkdownRenderer do
         @renderer.image("http://www.youtube.com/watch?v=fzlHs0UNmDY",
                         "", "alt_text").wont_match /<figcaption>/
       end
+    end
+  end
+
+  describe "#parse_table" do
+    it "uses a figure element" do
+      @renderer.parse_table("!table foo &quot;title&quot;").must_match /^<figure/
+    end
+
+    it "should have the 'table' class" do
+      @renderer.parse_table("!table foo &quot;title&quot;").must_match /^<figure\s+[^>]*class=['"]table['"]/
+    end
+
+    it "should have an appropriate id" do
+      @renderer.parse_table("!table foo &quot;title&quot;").must_match /^<figure\s+[^>]*id=['"]table-slug-1['"]/
+    end
+
+    it "should have a figcaption" do
+      @renderer.parse_table("!table foo &quot;title&quot;").must_match /<figcaption>.*?<\/figcaption><\/figure>\s*$/
+    end
+
+    it "should label the caption with Table" do
+      @renderer.parse_table("!table foo &quot;title&quot;").must_match /<figcaption>.*?Table.*?<\/figcaption><\/figure>\s*$/
+    end
+
+    it "should label the caption with the table number when no index is provided" do
+      @renderer.parse_table("!table foo &quot;title&quot;").must_match /<figcaption>.*?Table 1.*?<\/figcaption><\/figure>\s*$/
+    end
+
+    it "should label the caption with the full table number when an index is provided" do
+      renderer = Gutenberg::MarkdownRenderer.new("slug", "Foo", "en_us", @style, "V")
+      renderer.parse_table("!table foo &quot;title&quot;").must_match /<figcaption>.*?Table V-1.*?<\/figcaption><\/figure>\s*$/
+    end
+
+    it "should bold the table caption" do
+      @renderer.parse_table("!table foo &quot;title&quot;").must_match /<figcaption>.*?<strong>Table 1<\/strong>.*?<\/figcaption><\/figure>\s*$/
+    end
+
+    it "should place the given caption in the figcaption" do
+      @renderer.parse_table("!table foo &quot;title&quot;").must_match /<figcaption>.*?title<\/figcaption><\/figure>\s*$/
     end
   end
 

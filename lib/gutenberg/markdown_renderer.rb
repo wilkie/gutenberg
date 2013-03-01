@@ -98,16 +98,20 @@ module Gutenberg
       @table_count += 1
       id = "table-#{@slug}-#{@table_count}"
 
-      tag = "table-#{@index}-#{@table_count}" if tag == ""
+      full_index = "#{@index}-#{@table_count}"
+      if @index.empty?
+        full_index = @table_count.to_s
+      end
+      tag = "table-#{full_index}" if tag == ""
 
       # Add slug to reference lookup
       @lookup[tag] = {:slug       => id,
                       :index      => @table_count,
                       :caption    => caption,
-                      :full_index => "#{@index}-#{@table_count}"}
+                      :full_index => full_index}
 
       @tables << @lookup[tag]
-      "<figure class='table' id='#{id}'>\n#{table_renderer.to_html}<figcaption><strong>Table #{@index}-#{@table_count}</strong>: #{caption}</figcaption></figure>"
+      "<figure class='table' id='#{id}'>\n#{table_renderer.to_html}<figcaption><strong>Table #{full_index}</strong>: #{caption}</figcaption></figure>"
     end
 
     # Generates HTML for markdown blockquotes.
