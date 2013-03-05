@@ -4,6 +4,7 @@ module Gutenberg
   # Represents a style that can be applied to a book.
   class Style
     require 'yaml'
+    require 'fileutils'
 
     # The name of the style. Default: "Untitled"
     attr_reader :name
@@ -67,13 +68,14 @@ module Gutenberg
 
     # Returns the image location for the given image tag.
     def image_for(type)
-      @images[type]
+      "style/#{@images[type]}" if @images[type]
     end
 
     # Copies the assets to the given path.
     def copy(to)
+      FileUtils.mkdir_p "style"
       @assets.each do |a|
-        a.copy(to)
+        a.copy("style/#{to}")
       end
     end
   end

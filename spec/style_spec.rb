@@ -52,7 +52,7 @@ describe Gutenberg::Style do
 
     it "read the images map from the yaml file" do
       YAML.stubs(:load_file).returns({"images" => {"moo" => "moh"}})
-      Gutenberg::Style.new("foo").image_for("moo").must_equal "moh"
+      Gutenberg::Style.new("foo").image_for("moo").must_equal "style/moh"
     end
 
     it "read the assets from the yaml file" do
@@ -129,7 +129,7 @@ describe Gutenberg::Style do
     it "should have option override the images when specified in the yaml" do
       YAML.stubs(:load_file).returns({"images" => {"asdf" => "foo"}})
       Gutenberg::Style.new("foo", :images => {"moo" => "moh", "boo" => "boh"})
-        .image_for("moo").must_equal "moh"
+        .image_for("moo").must_equal "style/moh"
     end
 
     it "should have option override the author when no yaml file" do
@@ -157,7 +157,7 @@ describe Gutenberg::Style do
     it "should have option override the images when no yaml file" do
       File.stubs(:exists?).with(regexp_matches(/\.yml$/)).returns(false)
       Gutenberg::Style.new("foo", :images => {"moo" => "moh", "boo" => "boh"})
-        .image_for("moo").must_equal "moh"
+        .image_for("moo").must_equal "style/moh"
     end
 
     it "should store the name given" do
@@ -185,7 +185,7 @@ describe Gutenberg::Style do
 
     it "returns the correct image when no image is tagged" do
       Gutenberg::Style.new("pretty", :images => {"foo" => "bar"})
-        .image_for("foo").must_equal "bar"
+        .image_for("foo").must_equal "style/bar"
     end
   end
 
@@ -198,8 +198,8 @@ describe Gutenberg::Style do
     it "simply calls the copy method for each asset" do
       asset1 = mock('asset')
       asset2 = mock('asset')
-      asset1.expects(:copy).with("output")
-      asset2.expects(:copy).with("output")
+      asset1.expects(:copy).with("style/output")
+      asset2.expects(:copy).with("style/output")
 
       Gutenberg::Asset.stubs(:new).returns(asset1).then.returns(asset2)
 
