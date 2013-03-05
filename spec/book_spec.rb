@@ -32,6 +32,10 @@ describe Gutenberg::Book do
       .toc.must_equal(true)
   end
 
+  it "can be created with a title" do
+    Gutenberg::Book.new({:cover => "cover.svg"}).cover.must_equal("cover.svg")
+  end
+
   it "title can be pulled from yaml" do
     YAML.stubs(:load_file).returns({"title" => "Book Title"})
     Gutenberg::Book.new({:yaml => 'test.yaml'}).title.must_equal("Book Title")
@@ -53,10 +57,21 @@ describe Gutenberg::Book do
     Gutenberg::Book.new({:yaml => 'test.yaml'}).toc.must_equal(true)
   end
 
-  it "chapters can be pulled from yaml" do
+  it "pulls chapters from yaml" do
     YAML.stubs(:load_file).returns({"chapters" => ["foo"]})
     Gutenberg::Chapter.expects(:new).with(has_entry(:markdown_file, "foo")).returns(@chapter)
     Gutenberg::Book.new({:yaml => "test.yaml"}).chapters.must_equal([@chapter])
+  end
+
+  it "pulls prefaces from yaml" do
+    YAML.stubs(:load_file).returns({"prefaces" => ["foo"]})
+    Gutenberg::Chapter.expects(:new).with(has_entry(:markdown_file, "foo")).returns(@chapter)
+    Gutenberg::Book.new({:yaml => "test.yaml"}).prefaces.must_equal([@chapter])
+  end
+
+  it "cover can be pulled from yaml" do
+    YAML.stubs(:load_file).returns({"cover" => "cover.svg"})
+    Gutenberg::Book.new({:yaml => 'test.yaml'}).cover.must_equal("cover.svg")
   end
 
   it "has a reasonable default title" do
@@ -78,6 +93,14 @@ describe Gutenberg::Book do
 
   it "has an empty list of chapters by default" do
     Gutenberg::Book.new.chapters.must_equal([])
+  end
+
+  it "has an empty list of prefaces by default" do
+    Gutenberg::Book.new.prefaces.must_equal([])
+  end
+
+  it "has nil cover by default" do
+    Gutenberg::Book.new.cover.must_equal(nil)
   end
 
   it "has a reasonable default title when not specified in yaml" do
@@ -106,6 +129,16 @@ describe Gutenberg::Book do
     Gutenberg::Book.new({:yaml => "test.yaml"}).chapters.must_equal([])
   end
 
+  it "has an empty list of prefaces by default when not specified in yaml" do
+    YAML.stubs(:load_file).returns({"title" => "foo"})
+    Gutenberg::Book.new({:yaml => "test.yaml"}).prefaces.must_equal([])
+  end
+
+  it "has nil cover by default when not specified in yaml" do
+    YAML.stubs(:load_file).returns({"title" => "foo"})
+    Gutenberg::Book.new({:yaml => "test.yaml"}).cover.must_equal(nil)
+  end
+
   it "can override the title that is specified in yaml" do
     YAML.stubs(:load_file).returns({"title" => "foo"})
     Gutenberg::Book.new({:yaml => "test.yaml", :title => "bar"}).title.must_equal("bar")
@@ -131,6 +164,17 @@ describe Gutenberg::Book do
     YAML.stubs(:load_file).returns({"chapters" => ["foo"]})
     Gutenberg::Chapter.expects(:new).with(has_entry(:markdown_file, "bar")).returns(@chapter)
     Gutenberg::Book.new({:yaml => "test.yaml", :chapters => ["bar"]}).chapters.must_equal([@chapter])
+  end
+
+  it "can override the prefaces that are specified in yaml" do
+    YAML.stubs(:load_file).returns({"prefaces" => ["foo"]})
+    Gutenberg::Chapter.expects(:new).with(has_entry(:markdown_file, "bar")).returns(@chapter)
+    Gutenberg::Book.new({:yaml => "test.yaml", :prefaces => ["bar"]}).prefaces.must_equal([@chapter])
+  end
+
+  it "can override the cover that is specified in yaml" do
+    YAML.stubs(:load_file).returns({"cover" => "cover.svg"})
+    Gutenberg::Book.new({:yaml => "test.yaml", :cover => "bar.svg"}).cover.must_equal("bar.svg")
   end
 
   it "creates a Chapter object for a listed chapter" do

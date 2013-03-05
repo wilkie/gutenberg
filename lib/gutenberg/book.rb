@@ -31,6 +31,9 @@ module Gutenberg
     # The tables used throughout the book.
     attr_reader :tables
 
+    # The image to use for the cover. Default: nil
+    attr_reader :cover
+
     # Will create the book class and organize all metadata. Can be passed the
     # following options:
     # :yaml    - the filename of YAML that describes the book
@@ -54,8 +57,11 @@ module Gutenberg
 
         options[:prefaces] ||= data["prefaces"]
         options[:chapters] ||= data["chapters"]
+
+        options[:cover]    ||= data["cover"]
       end
 
+      @cover    = options[:cover]
       @title    = options[:title]   || "Untitled"
       @authors  = options[:authors] || ["anonymous"]
       @toc      = options[:toc]     || false
