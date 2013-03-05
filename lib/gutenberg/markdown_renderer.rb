@@ -56,7 +56,7 @@ module Gutenberg
       end
 
       # Don't parse html tags
-      if text.start_with? "<"
+      if text.start_with?("<") && !text.start_with?("<strong") && !text.start_with?("<em")
         return text
       end
 
