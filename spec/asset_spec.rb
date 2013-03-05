@@ -166,6 +166,7 @@ describe Gutenberg::Asset do
 
       FileUtils.stubs(:mkdir_p)
       FileUtils.expects(:cp).with(regexp_matches(/images\/foo.png$/), regexp_matches(/bar\/images/))
+      FileUtils.stubs(:cp).with(regexp_matches(/images\/foo.yml$/), regexp_matches(/bar\/images/))
 
       Gutenberg::Asset.new("images/foo.png").copy "bar"
     end
@@ -178,6 +179,17 @@ describe Gutenberg::Asset do
       FileUtils.stubs(:cp).raises(ArgumentError)
 
       Gutenberg::Asset.new("images/foo.png").copy "images"
+    end
+
+    it "copies the asset file when it exists" do
+      File.stubs(:exists?).returns(true)
+      YAML.stubs(:load_file).returns({})
+
+      FileUtils.stubs(:mkdir_p)
+      FileUtils.stubs(:cp).with(regexp_matches(/images\/foo.png$/), regexp_matches(/bar\/images/))
+      FileUtils.expects(:cp).with(regexp_matches(/images\/foo.yml$/), regexp_matches(/bar\/images/))
+
+      Gutenberg::Asset.new("images/foo.png").copy "bar"
     end
 
     it "raises an exception when the destination is not found" do

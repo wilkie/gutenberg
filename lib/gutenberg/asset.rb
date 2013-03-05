@@ -54,11 +54,11 @@ module Gutenberg
       @path = File.expand_path(@path)
 
       # Look for a metadata file
-      metadata_path = File.expand_path(
+      @metadata_path = File.expand_path(
         @path.chomp(File.extname(@path))) + ".yml"
 
-      if File.exists?(metadata_path)
-        metadata = YAML.load_file(metadata_path)
+      if File.exists?(@metadata_path)
+        metadata = YAML.load_file(@metadata_path)
         @author = metadata["author"] || "anonymous"
         @author_url = metadata["author-website"]
         @collection = metadata["collection"]
@@ -69,6 +69,7 @@ module Gutenberg
       else
         @attribution = false
         @author = "anonymous"
+        @metadata_path = nil
       end
     end
 
@@ -78,6 +79,7 @@ module Gutenberg
       FileUtils.mkdir_p "#{to}/#{subpath}"
       begin
         FileUtils.cp @path, "#{to}/#{subpath}"
+        FileUtils.cp @metadata_path, "#{to}/#{subpath}" if @metadata_path
       rescue ArgumentError => e
         # For when the source and destination are the same
       end
