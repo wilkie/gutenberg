@@ -3,12 +3,12 @@ author: "wilkie"
 author-website: http://blog.davewilkinsonii.com
 attribution: true
 description: "Applies a very basic style with no frills."
-assets: ["css/style.css",
-         "css/reset.css",
+assets: ["css/reset.css",
+         "css/style.css",
          "css/zenburn.css",
          "js/jquery.js",
-         "js/typeset.js",
          "js/prettify.js",
+         "js/typeset.js",
          "images/note.svg",
          "images/quote.svg",
          "images/error.svg",
