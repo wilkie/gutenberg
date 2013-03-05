@@ -1,4 +1,6 @@
 #cover.page
+  - if book.cover
+    %img{:src => book.cover, :title => book.title}
 
 - book.prefaces.each do |p|
   !=p.html

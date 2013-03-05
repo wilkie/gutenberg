@@ -4,9 +4,13 @@ module Gutenberg
     # The Gutenberg::Book instance
     attr_reader :book
 
+    # The Gutenberg::Style instance
+    attr_reader :style
+
     # Creates an instance of the supervisor for the given book.
     def initialize(book)
       @book = book
+      @style = book.style
     end
 
     # Returns an unordered list representing the given outline.

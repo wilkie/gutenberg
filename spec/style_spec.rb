@@ -6,6 +6,8 @@ describe Gutenberg::Style do
     before do
       YAML.stubs(:load_file).returns({})
       File.stubs(:exists?).returns(true)
+      @asset = mock('asset')
+      @asset.stubs(:type).returns(:image)
     end
 
     it "should determine the path to the style" do
@@ -57,9 +59,13 @@ describe Gutenberg::Style do
 
     it "read the assets from the yaml file" do
       YAML.stubs(:load_file).returns({"assets" => ["foo", "bar"]})
-      Gutenberg::Asset.expects(:new).with("foo", anything).returns("a")
-      Gutenberg::Asset.expects(:new).with("bar", anything).returns("b")
-      Gutenberg::Style.new("foo").assets.must_equal ["a", "b"]
+      asset1 = mock('asset')
+      asset1.stubs(:type).returns(:image)
+      asset2 = mock('asset')
+      asset2.stubs(:type).returns(:image)
+      Gutenberg::Asset.expects(:new).with("foo", anything).returns(asset1)
+      Gutenberg::Asset.expects(:new).with("bar", anything).returns(asset2)
+      Gutenberg::Style.new("foo").assets.must_equal [asset1, asset2]
     end
 
     it "should yield the default author when not specified in the yaml" do
@@ -99,9 +105,13 @@ describe Gutenberg::Style do
 
     it "should have option override the assets when not specified in the yaml" do
       YAML.stubs(:load_file).returns({})
-      Gutenberg::Asset.expects(:new).with("moo", anything).returns("a")
-      Gutenberg::Asset.expects(:new).with("boo", anything).returns("b")
-      Gutenberg::Style.new("foo", :assets => ["moo", "boo"]).assets.must_equal ["a", "b"]
+      asset1 = mock('asset')
+      asset1.stubs(:type).returns(:image)
+      asset2 = mock('asset')
+      asset2.stubs(:type).returns(:image)
+      Gutenberg::Asset.expects(:new).with("moo", anything).returns(asset1)
+      Gutenberg::Asset.expects(:new).with("boo", anything).returns(asset2)
+      Gutenberg::Style.new("foo", :assets => ["moo", "boo"]).assets.must_equal [asset1, asset2]
     end
 
     it "should have option override the author when specified in the yaml" do
@@ -121,9 +131,13 @@ describe Gutenberg::Style do
 
     it "should have option override the assets when specified in the yaml" do
       YAML.stubs(:load_file).returns({"assets" => ["foo", "bar"]})
-      Gutenberg::Asset.expects(:new).with("moo", anything).returns("a")
-      Gutenberg::Asset.expects(:new).with("boo", anything).returns("b")
-      Gutenberg::Style.new("foo", :assets => ["moo", "boo"]).assets.must_equal ["a", "b"]
+      asset1 = mock('asset')
+      asset1.stubs(:type).returns(:image)
+      asset2 = mock('asset')
+      asset2.stubs(:type).returns(:image)
+      Gutenberg::Asset.expects(:new).with("moo", anything).returns(asset1)
+      Gutenberg::Asset.expects(:new).with("boo", anything).returns(asset2)
+      Gutenberg::Style.new("foo", :assets => ["moo", "boo"]).assets.must_equal [asset1, asset2]
     end
 
     it "should have option override the images when specified in the yaml" do
@@ -149,9 +163,13 @@ describe Gutenberg::Style do
 
     it "should have option override the assets when no yaml file" do
       File.stubs(:exists?).with(regexp_matches(/\.yml$/)).returns(false)
-      Gutenberg::Asset.expects(:new).with("moo", anything).returns("a")
-      Gutenberg::Asset.expects(:new).with("boo", anything).returns("b")
-      Gutenberg::Style.new("foo", :assets => ["moo", "boo"]).assets.must_equal ["a", "b"]
+      asset1 = mock('asset')
+      asset1.stubs(:type).returns(:image)
+      asset2 = mock('asset')
+      asset2.stubs(:type).returns(:image)
+      Gutenberg::Asset.expects(:new).with("moo", anything).returns(asset1)
+      Gutenberg::Asset.expects(:new).with("boo", anything).returns(asset2)
+      Gutenberg::Style.new("foo", :assets => ["moo", "boo"]).assets.must_equal [asset1, asset2]
     end
 
     it "should have option override the images when no yaml file" do
@@ -166,9 +184,13 @@ describe Gutenberg::Style do
 
     it "should pass the style path to Asset" do
       File.stubs(:exists?).with(regexp_matches(/\.yml$/)).returns(false)
-      Gutenberg::Asset.expects(:new).with("moo", regexp_matches(/styles\/foo$/)).returns("a")
-      Gutenberg::Asset.expects(:new).with("boo", regexp_matches(/styles\/foo$/)).returns("b")
-      Gutenberg::Style.new("foo", :assets => ["moo", "boo"]).assets.must_equal ["a", "b"]
+      asset1 = mock('asset')
+      asset1.stubs(:type).returns(:image)
+      asset2 = mock('asset')
+      asset2.stubs(:type).returns(:image)
+      Gutenberg::Asset.expects(:new).with("moo", regexp_matches(/styles\/foo$/)).returns(asset1)
+      Gutenberg::Asset.expects(:new).with("boo", regexp_matches(/styles\/foo$/)).returns(asset2)
+      Gutenberg::Style.new("foo", :assets => ["moo", "boo"]).assets.must_equal [asset1, asset2]
     end
   end
 
@@ -199,13 +221,78 @@ describe Gutenberg::Style do
       asset1 = mock('asset')
       asset2 = mock('asset')
       asset1.expects(:copy).with("style/output")
+      asset1.stubs(:type).returns(:image)
       asset2.expects(:copy).with("style/output")
+      asset2.stubs(:type).returns(:image)
 
       Gutenberg::Asset.stubs(:new).returns(asset1).then.returns(asset2)
 
       Gutenberg::Style.new("foo", :assets => ["moo", "boo"],
                                   :images => {"foo" => "bar"})
         .copy("output")
+    end
+  end
+
+  describe "#stylesheets" do
+    before do
+      File.stubs(:exists?).returns(true)
+      YAML.stubs(:load_file).returns({})
+    end
+
+    it "should collect all stylesheet assets" do
+      YAML.stubs(:load_file).returns({"assets" => ["foo", "bar", "baz"]})
+      asset1 = mock('asset')
+      asset1.stubs(:type).returns(:image)
+      asset2 = mock('asset')
+      asset2.stubs(:type).returns(:stylesheet)
+      asset3 = mock('asset')
+      asset3.stubs(:type).returns(:stylesheet)
+      Gutenberg::Asset.stubs(:new).with("foo", anything).returns(asset1)
+      Gutenberg::Asset.stubs(:new).with("bar", anything).returns(asset2)
+      Gutenberg::Asset.stubs(:new).with("baz", anything).returns(asset3)
+      Gutenberg::Style.new("foo").stylesheets.must_equal [asset2, asset3]
+    end
+  end
+
+  describe "#images" do
+    before do
+      File.stubs(:exists?).returns(true)
+      YAML.stubs(:load_file).returns({})
+    end
+
+    it "should collect all image assets" do
+      YAML.stubs(:load_file).returns({"assets" => ["foo", "bar", "baz"]})
+      asset1 = mock('asset')
+      asset1.stubs(:type).returns(:image)
+      asset2 = mock('asset')
+      asset2.stubs(:type).returns(:stylesheet)
+      asset3 = mock('asset')
+      asset3.stubs(:type).returns(:image)
+      Gutenberg::Asset.stubs(:new).with("foo", anything).returns(asset1)
+      Gutenberg::Asset.stubs(:new).with("bar", anything).returns(asset2)
+      Gutenberg::Asset.stubs(:new).with("baz", anything).returns(asset3)
+      Gutenberg::Style.new("foo").images.must_equal [asset1, asset3]
+    end
+  end
+
+  describe "#scripts" do
+    before do
+      File.stubs(:exists?).returns(true)
+      YAML.stubs(:load_file).returns({})
+    end
+
+    it "should collect all script assets" do
+      YAML.stubs(:load_file).returns({"assets" => ["foo", "bar", "baz"]})
+      asset1 = mock('asset')
+      asset1.stubs(:type).returns(:script)
+      asset2 = mock('asset')
+      asset2.stubs(:type).returns(:script)
+      asset3 = mock('asset')
+      asset3.stubs(:type).returns(:image)
+      Gutenberg::Asset.stubs(:new).with("foo", anything).returns(asset1)
+      Gutenberg::Asset.stubs(:new).with("bar", anything).returns(asset2)
+      Gutenberg::Asset.stubs(:new).with("baz", anything).returns(asset3)
+      Gutenberg::Style.new("foo").scripts.must_equal [asset1, asset2]
     end
   end
 end

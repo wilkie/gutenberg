@@ -4,7 +4,12 @@ em {
 strong {
   font-weight: bold;
 }
-
+div#cover {
+  text-align: center;
+}
+div#cover img {
+  vertical-align:middle;
+}
 div.page {
   width: 600px;
   height: 800px;

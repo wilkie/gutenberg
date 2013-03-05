@@ -26,6 +26,15 @@ module Gutenberg
     # The list of assets required by the style. Default: []
     attr_reader :assets
 
+    # The list of scripts required by the style. Default: []
+    attr_reader :scripts
+
+    # The list of stylesheets required by the style. Default: []
+    attr_reader :stylesheets
+
+    # The list of images required by the style. Default: []
+    attr_reader :images
+
     # The path to the style information. Default: nil
     attr_reader :path
 
@@ -61,14 +70,29 @@ module Gutenberg
 
       @assets = assets.map{|a| Gutenberg::Asset.new(a, @path)}
 
-      @images = options[:images] || {}
+      @images = []
+      @stylesheets = []
+      @scripts = []
+
+      @assets.each do |a|
+        case a.type
+        when :image
+          @images << a
+        when :script
+          @scripts << a
+        when :stylesheet
+          @stylesheets << a
+        end
+      end
+
+      @images_for = options[:images] || {}
 
       @name = name
     end
 
     # Returns the image location for the given image tag.
     def image_for(type)
-      "style/#{@images[type]}" if @images[type]
+      "style/#{@images_for[type]}" if @images_for[type]
     end
 
     # Copies the assets to the given path.

@@ -150,6 +150,78 @@ describe Gutenberg::Asset do
     end
   end
 
+  describe "#type" do
+    it "should detect a png image file" do
+      File.stubs(:exists?).returns(true)
+      YAML.stubs(:load_file).returns({})
+
+      Gutenberg::Asset.new("images/foo.png").type.must_equal :image
+    end
+
+    it "should detect a svg image file" do
+      File.stubs(:exists?).returns(true)
+      YAML.stubs(:load_file).returns({})
+
+      Gutenberg::Asset.new("images/foo.svg").type.must_equal :image
+    end
+
+    it "should detect a jpg image file" do
+      File.stubs(:exists?).returns(true)
+      YAML.stubs(:load_file).returns({})
+
+      Gutenberg::Asset.new("images/foo.jpg").type.must_equal :image
+    end
+
+    it "should detect a jpeg image file" do
+      File.stubs(:exists?).returns(true)
+      YAML.stubs(:load_file).returns({})
+
+      Gutenberg::Asset.new("images/foo.jpeg").type.must_equal :image
+    end
+
+    it "should detect a gif image file" do
+      File.stubs(:exists?).returns(true)
+      YAML.stubs(:load_file).returns({})
+
+      Gutenberg::Asset.new("images/foo.gif").type.must_equal :image
+    end
+
+    it "should detect a javascript file" do
+      File.stubs(:exists?).returns(true)
+      YAML.stubs(:load_file).returns({})
+
+      Gutenberg::Asset.new("images/foo.js").type.must_equal :script
+    end
+
+    it "should detect a css stylesheet file" do
+      File.stubs(:exists?).returns(true)
+      YAML.stubs(:load_file).returns({})
+
+      Gutenberg::Asset.new("images/foo.css").type.must_equal :stylesheet
+    end
+
+    it "should detect a sass stylesheet file" do
+      File.stubs(:exists?).returns(true)
+      YAML.stubs(:load_file).returns({})
+
+      Gutenberg::Asset.new("images/foo.sass").type.must_equal :stylesheet
+    end
+
+    it "should detect a less stylesheet file" do
+      File.stubs(:exists?).returns(true)
+      YAML.stubs(:load_file).returns({})
+
+      Gutenberg::Asset.new("images/foo.less").type.must_equal :stylesheet
+    end
+
+    it "should detect a scss stylesheet file" do
+      File.stubs(:exists?).returns(true)
+      YAML.stubs(:load_file).returns({})
+
+      Gutenberg::Asset.new("images/foo.scss").type.must_equal :stylesheet
+    end
+  end
+
   describe "#copy" do
     it "creates the correct directory for the asset" do
       File.stubs(:exists?).returns(true)

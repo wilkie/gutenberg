@@ -11,9 +11,9 @@ module Gutenberg
     attr_reader :name
 
     # The type of asset. Types include:
-    # :image  = An image file
-    # :script = A dynamic script
-    # :css    = Stylesheet
+    # :image      = An image file
+    # :script     = A dynamic script
+    # :stylesheet = Stylesheet
     attr_reader :type
 
     # Whether or not this asset should have attribution.
@@ -53,6 +53,17 @@ module Gutenberg
 
       @path = File.expand_path(@path)
 
+      @ext  = File.extname(@path)
+
+      case @ext
+      when ".css", ".sass", ".less", ".scss"
+        @type = :stylesheet
+      when ".js"
+        @type = :script
+      else
+        @type = :image
+      end
+
       # Look for a metadata file
       @metadata_path = File.expand_path(
         @path.chomp(File.extname(@path))) + ".yml"
@@ -71,6 +82,13 @@ module Gutenberg
         @author = "anonymous"
         @metadata_path = nil
       end
+    end
+
+    # Yields the asset path from the given path.
+    def path_from(from)
+      subpath = File.basename @path.chomp(File.basename(@path))
+      from = "#{from}/" if from && !from.end_with?("/")
+      "#{from}#{subpath}/#{File.basename(@path)}"
     end
 
     # Copies the asset to the given path.
