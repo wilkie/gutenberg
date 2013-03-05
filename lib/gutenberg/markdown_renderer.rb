@@ -55,23 +55,21 @@ module Gutenberg
         return parse_table(text)
       end
 
-      # Don't parse html tags
-      if text.start_with?("<") && !text.start_with?("<strong") && !text.start_with?("<em")
-        return text
-      end
-
       # Find directive
       match = text.match /^!([^ ]+)\s(.*)/
 
       directive = match[1] if match
       text = match[2] if match
-      text = text.split(' ').map do |word|
-        if word.start_with? '@[' and word.end_with? ']'
-          word
-        else
-          @hyphenator.visualize(word, "&shy;")
-        end
-      end.join(' ')
+      text.gsub! /([^<]+)*(<[^>]+>|$)/ do
+        gap = $1 || ""
+        gap.split(' ').map do |word|
+          if word.start_with? '@[' and word.end_with? ']'
+            word
+          else
+            @hyphenator.visualize(word, "&shy;")
+          end
+        end.join(' ') << $2
+      end
 
       if directive
         "<div class='inset #{directive}'><img src='#{@style.image_for(directive)}' /><p>#{text}</p></div>\n\n"

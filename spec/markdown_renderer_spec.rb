@@ -56,6 +56,12 @@ describe Gutenberg::MarkdownRenderer do
       @renderer.paragraph("!note hello")
         .must_match /<img.*?src=['"]foo['"]\s*\/>/
     end
+
+    it "does not hyphenate html tags" do
+      @hyphen.stubs(:visualize).returns("he&shy;llo")
+      @renderer.paragraph("<a href='foo'>hello</a>")
+        .must_match /^<p><a href='foo'>he&shy;llo<\/a><\/p>/
+    end
   end
 
   describe "#block_quote" do
