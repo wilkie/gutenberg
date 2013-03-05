@@ -44,13 +44,14 @@ module Gutenberg
         end
 
         if ARGV.empty?
-          puts @opts
-          exit -1
+          book_yaml = "book.yml"
+        else
+          book_yaml = ARGV[0]
         end
 
         # Default
-        book = Book.new(:yaml => ARGV[0])
-        basename = File.basename(ARGV[0], File.extname(ARGV[0]))
+        book = Book.new(:yaml => book_yaml)
+        basename = File.basename(book_yaml, File.extname(book_yaml))
         gen  = Generator.new("basic")
         gen.render_to book, "#{basename}.html"
         gen.copy book, "."
