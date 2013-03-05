@@ -49,7 +49,9 @@ describe Gutenberg::Chapter do
         # mock out a renderer that, by default, renders any markdown as <foo>
         @md_renderer = mock('md_renderer')
         @md_renderer.stubs(:title).returns("")
-        @md_renderer.stubs(:outline).returns(nil)
+        outline = mock('outline')
+        outline.stubs(:slug).returns("slug")
+        @md_renderer.stubs(:outline).returns(outline)
         @md_renderer.stubs(:images).returns([])
         @md_renderer.stubs(:tables).returns([])
         Gutenberg::MarkdownRenderer.stubs(:new).returns(@md_renderer)
@@ -179,6 +181,38 @@ describe Gutenberg::Chapter do
         File.stubs(:read).returns("---\ntitle: foo\n---\nblah")
         @renderer.expects(:render).with("blah")
         Gutenberg::Chapter.new(:markdown_file => "foo.md")
+      end
+
+      it "adds a header for the chapter title from yaml if not in the markdown" do
+        File.stubs(:read).returns("---\ntitle: foo\n---\nblah")
+        YAML.stubs(:load).with("title: foo").returns({"title" => "foo"})
+        @renderer.stubs(:render).with("blah").returns("<p>blah</p>")
+        @md_renderer.stubs(:title).returns(nil)
+        Gutenberg::Chapter.new(:markdown_file => "foo.md").html.must_match /^<h1 id=['"]slug['"]>foo<\/h1>/
+      end
+
+      it "does not add a header for the chapter title if not in the markdown nor yaml" do
+        File.stubs(:read).returns("---\n---\nblah")
+        YAML.stubs(:load).with("").returns({})
+        @renderer.stubs(:render).with("blah").returns("<p>blah</p>")
+        @md_renderer.stubs(:title).returns(nil)
+        Gutenberg::Chapter.new(:markdown_file => "foo.md").html.must_match /^<p>blah<\/p>/
+      end
+
+      it "does not add a header for the chapter title if already added in markdown" do
+        File.stubs(:read).returns("---\n---\nblah")
+        YAML.stubs(:load).with("").returns({})
+        @renderer.stubs(:render).with("blah").returns("<p>blah</p>")
+        @md_renderer.stubs(:title).returns("foo")
+        Gutenberg::Chapter.new(:markdown_file => "foo.md").html.must_match /^<p>blah<\/p>/
+      end
+
+      it "does not add a header for the chapter title from yaml if already added in markdown" do
+        File.stubs(:read).returns("---\ntitle: foo\n---\nblah")
+        YAML.stubs(:load).with("title: foo").returns({"title" => "foo"})
+        @renderer.stubs(:render).with("blah").returns("<p>blah</p>")
+        @md_renderer.stubs(:title).returns("foo")
+        Gutenberg::Chapter.new(:markdown_file => "foo.md").html.must_match /^<p>blah<\/p>/
       end
     end
   end

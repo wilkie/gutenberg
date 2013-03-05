@@ -115,7 +115,7 @@ module Gutenberg
         # title can be inferred from markdown
         options[:title] = options[:title] || renderer.title
 
-        if renderer.title.nil?
+        if renderer.title.nil? && options[:title]
           @html = "<h1 id='#{renderer.outline.slug}'>#{options[:title]}</h1>#{@html}"
         end
 
