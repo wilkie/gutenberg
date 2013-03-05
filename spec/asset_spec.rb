@@ -169,5 +169,27 @@ describe Gutenberg::Asset do
 
       Gutenberg::Asset.new("images/foo.png").copy "bar"
     end
+
+    it "allows source and destination to be the same" do
+      File.stubs(:exists?).returns(true)
+      YAML.stubs(:load_file).returns({})
+
+      FileUtils.stubs(:mkdir_p)
+      FileUtils.stubs(:cp).raises(ArgumentError)
+
+      Gutenberg::Asset.new("images/foo.png").copy "images"
+    end
+
+    it "raises an exception when the destination is not found" do
+      File.stubs(:exists?).returns(true)
+      YAML.stubs(:load_file).returns({})
+
+      FileUtils.stubs(:mkdir_p)
+      FileUtils.stubs(:cp).raises(Errno::ENOENT)
+
+      proc {
+        Gutenberg::Asset.new("images/foo.png").copy("images")
+      }.must_raise Errno::ENOENT
+    end
   end
 end

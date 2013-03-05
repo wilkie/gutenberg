@@ -76,7 +76,11 @@ module Gutenberg
     def copy(to)
       subpath = File.basename @path.chomp(File.basename(@path))
       FileUtils.mkdir_p "#{to}/#{subpath}"
-      FileUtils.cp @path, "#{to}/#{subpath}"
+      begin
+        FileUtils.cp @path, "#{to}/#{subpath}"
+      rescue ArgumentError => e
+        # For when the source and destination are the same
+      end
     end
   end
 end
