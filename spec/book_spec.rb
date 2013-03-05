@@ -171,4 +171,49 @@ describe Gutenberg::Book do
     Gutenberg::Book.new({:chapters => ["foo", "boo"]})
       .tables.must_equal ["foo", "bar", "baz", "caz"]
   end
+
+  it "can override the prefaces that are specified in yaml" do
+    YAML.stubs(:load_file).returns({"prefaces" => ["foo"]})
+    Gutenberg::Chapter.expects(:new).with(has_entry(:markdown_file, "bar")).returns(@chapter)
+    Gutenberg::Book.new({:yaml => "test.yaml", :prefaces => ["bar"]}).prefaces.must_equal([@chapter])
+  end
+
+  it "creates a Chapter object for a listed preface" do
+    c = Gutenberg::Chapter.new
+    Gutenberg::Chapter.expects(:new).with(has_entry(:markdown_file, "foo")).returns(c)
+    Gutenberg::Book.new({:prefaces => ["foo"]})
+      .prefaces.first.must_be_instance_of(Gutenberg::Chapter)
+  end
+
+  it "passes the style to the Chapter objects created for prefaces" do
+    Gutenberg::Chapter.expects(:new).with(has_entry(:style, "foo")).returns(@chapter)
+    Gutenberg::Style.stubs(:new).returns("foo")
+    Gutenberg::Book.new(:prefaces => ["foo"], :style => "pretty")
+  end
+
+  it "combines all images from all prefaces into images property" do
+    chapter_1 = mock('chapter')
+    chapter_2 = mock('chapter')
+    chapter_1.expects(:images).returns(["foo", "bar"])
+    chapter_2.expects(:images).returns(["baz", "caz"])
+    chapter_1.stubs(:tables).returns([])
+    chapter_2.stubs(:tables).returns([])
+    Gutenberg::Chapter.stubs(:new).with(has_entry(:markdown_file, "foo")).returns(chapter_1)
+    Gutenberg::Chapter.stubs(:new).with(has_entry(:markdown_file, "boo")).returns(chapter_2)
+    Gutenberg::Book.new({:prefaces => ["foo", "boo"]})
+      .images.must_equal ["foo", "bar", "baz", "caz"]
+  end
+
+  it "combines all tables from all prefaces into tables property" do
+    chapter_1 = mock('chapter')
+    chapter_2 = mock('chapter')
+    chapter_1.stubs(:images).returns([])
+    chapter_2.stubs(:images).returns([])
+    chapter_1.expects(:tables).returns(["foo", "bar"])
+    chapter_2.expects(:tables).returns(["baz", "caz"])
+    Gutenberg::Chapter.stubs(:new).with(has_entry(:markdown_file, "foo")).returns(chapter_1)
+    Gutenberg::Chapter.stubs(:new).with(has_entry(:markdown_file, "boo")).returns(chapter_2)
+    Gutenberg::Book.new({:prefaces => ["foo", "boo"]})
+      .tables.must_equal ["foo", "bar", "baz", "caz"]
+  end
 end

@@ -19,6 +19,9 @@ module Gutenberg
     # The chapters gathered in this book as Gutenberg::Chapter. Default: []
     attr_reader :chapters
 
+    # The prefaces gathered in this book as Gutenberg::Chapter. Default: []
+    attr_reader :prefaces
+
     # Whether or not the table of contents is displayed. Default: false
     attr_reader :toc
 
@@ -43,13 +46,14 @@ module Gutenberg
       if options[:yaml]
         data = YAML::load_file(options[:yaml])
 
-        options[:title]    = options[:title]    || data["title"]
-        options[:authors]  = options[:authors]  || data["authors"]
-        options[:style]    = options[:style]    || data["style"]
+        options[:title]    ||= data["title"]
+        options[:authors]  ||= data["authors"]
+        options[:style]    ||= data["style"]
 
-        options[:toc]      = options[:toc]      || data["toc"]
+        options[:toc]      ||= data["toc"]
 
-        options[:chapters] = options[:chapters] || data["chapters"]
+        options[:prefaces] ||= data["prefaces"]
+        options[:chapters] ||= data["chapters"]
       end
 
       @title    = options[:title]   || "Untitled"
@@ -60,9 +64,19 @@ module Gutenberg
       @style = Gutenberg::Style.new(style)
 
       chapters = options[:chapters] || []
+      prefaces = options[:prefaces] || []
 
       @images   = []
       @tables   = []
+
+      @prefaces = []
+      prefaces.each_with_index do |p,i|
+        preface = Chapter.new(:markdown_file => p, :style => @style, :index => i+1)
+        @prefaces << preface
+        @images.concat preface.images
+        @tables.concat preface.tables
+      end
+
       @chapters = []
       chapters.each_with_index do |c,i|
         chapter = Chapter.new(:markdown_file => c, :style => @style, :index => i+1)
