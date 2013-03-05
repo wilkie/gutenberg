@@ -115,6 +115,10 @@ module Gutenberg
         # title can be inferred from markdown
         options[:title] = options[:title] || renderer.title
 
+        if renderer.title.nil?
+          @html = "<h1 id='#{renderer.outline.slug}'>#{options[:title]}</h1>#{@html}"
+        end
+
         # Get the image list
         @images = renderer.images
 
