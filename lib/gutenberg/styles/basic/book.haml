@@ -9,25 +9,27 @@
 - book.chapters.each do |c|
   !=c.html
 
-%h1#table-of-figures
-  Table of Figures
-%div.tof
-  %ul
-    - book.images.each do |i|
-      %li<
-        %a{:href=>"##{i[:slug]}"}<
-          Figure #{i[:full_index]}
-        \: #{i[:caption]}
+- unless book.images.empty?
+  %h1#table-of-figures
+    Table of Figures
+  %div.tof
+    %ul
+      - book.images.each do |i|
+        %li<
+          %a{:href=>"##{i[:slug]}"}<
+            Figure #{i[:full_index]}
+          \: #{i[:caption]}
 
-%h1#table-of-tables
-  Table of Tables
-%div.tot
-  %ul
-    - book.tables.each do |i|
-      %li<
-        %a{:href=>"##{i[:slug]}"}<
-          Table #{i[:full_index]}
-        \: #{i[:caption]}
+- unless book.tables.empty?
+  %h1#table-of-tables
+    Table of Tables
+  %div.tot
+    %ul
+      - book.tables.each do |i|
+        %li<
+          %a{:href=>"##{i[:slug]}"}<
+            Table #{i[:full_index]}
+          \: #{i[:caption]}
 
 %h1#acknowledgements
   Acknowledgements
