@@ -12,7 +12,10 @@
     %link{:href=>'http://fonts.googleapis.com/css?family=Lusitana|Inconsolata|Oxygen', :rel=>'stylesheet', :type=>'text/css'}
 
     - style.stylesheets.each do |s|
-      %link{:rel=>'stylesheet', :type=>'text/css', :href=>s.path_from("style")}
+      - if s.style_supplied?
+        %link{:rel=>'stylesheet', :type=>'text/css', :href=>s.path_from("style")}
+      - else
+        %link{:rel=>'stylesheet', :type=>'text/css', :href=>s.path_from("")}
   %body
     = yield
 

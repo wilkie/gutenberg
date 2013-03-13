@@ -17,22 +17,33 @@ div.page {
   background-color: white;
   color: black;
   margin-bottom: 10px;
+  position: relative;
+  border: 1px solid black;
+}
+div.page div.toc:last-child {
+  margin-bottom: 20px;
 }
 div.page div.footer {
   text-align: center;
+  width: 100%;
+  margin: 0;
+
+  position:absolute;
+  bottom: 10px;
 }
 body {
-  background-color: black;
-  color: white;
+  background-color: white;
+  color: black;
   width: 600px;
   margin: 10px
 }
 h1 {
   text-align: center;
   margin-top: 80px;
-  font-size: 3em;
+  font-size: 45px;
   margin-bottom: 80px;
   font-family: "Lusitana", serif;
+  line-height: 58px;
 }
 h2 {
   font-size: 1.8em;
