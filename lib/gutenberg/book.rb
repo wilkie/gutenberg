@@ -49,16 +49,18 @@ module Gutenberg
       if options[:yaml]
         data = YAML::load_file(options[:yaml])
 
-        options[:title]    ||= data["title"]
-        options[:authors]  ||= data["authors"]
-        options[:style]    ||= data["style"]
+        options[:title]        ||= data["title"]
+        options[:authors]      ||= data["authors"]
+        options[:style]        ||= data["style"]
 
-        options[:toc]      ||= data["toc"]
+        options[:toc]          ||= data["toc"]
 
-        options[:prefaces] ||= data["prefaces"]
-        options[:chapters] ||= data["chapters"]
+        options[:prefaces]     ||= data["prefaces"]
+        options[:chapters]     ||= data["chapters"]
 
-        options[:cover]    ||= data["cover"]
+        options[:cover]        ||= data["cover"]
+
+        options[:style_config] ||= data["style-config"]
       end
 
       @cover    = options[:cover]
@@ -67,7 +69,9 @@ module Gutenberg
       @toc      = options[:toc]     || false
       style     = options[:style]   || "basic"
 
-      @style = Gutenberg::Style.new(style)
+      options[:style_config] ||= "style.yml"
+
+      @style = Gutenberg::Style.new(style, :yaml => options[:style_config])
 
       chapters = options[:chapters] || []
       prefaces = options[:prefaces] || []

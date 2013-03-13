@@ -26,6 +26,9 @@ module Gutenberg
     # The list of assets required by the style. Default: []
     attr_reader :assets
 
+    # The list of supplemented assets required by the book. Default: []
+    attr_reader :external_assets
+
     # The list of scripts required by the style. Default: []
     attr_reader :scripts
 
@@ -40,6 +43,10 @@ module Gutenberg
 
     # Creates a reference to style data which can be used to organize
     # the data and assets and produce the book.
+    #
+    # options can include:
+    # :yaml = The location of the style yaml file which includes the external
+    #         assets location.
     def initialize(name, options={})
       @path = "#{File.dirname(__FILE__)}/styles/#{name}"
       # Ensure style exists
@@ -52,6 +59,7 @@ module Gutenberg
         data = YAML.load_file("#{@path}/config.yml")
 
         name = data["name"] if data["name"]
+
         options[:author]      ||= data["author"]
         options[:author_url]  ||= data["author-website"]
         options[:description] ||= data["description"]
@@ -68,13 +76,23 @@ module Gutenberg
       @description = options[:description] || ""
       assets       = options[:assets]      || []
 
-      @assets = assets.map{|a| Gutenberg::Asset.new(a, @path)}
+      @assets = assets.map{|a| Gutenberg::Asset.new(a, self)}
+
+      # Gather external style information
+      if options[:yaml]
+        data = YAML::load_file(options[:yaml])
+
+        options[:external_assets] ||= data["assets"]
+      end
+
+      external_assets = options[:external_assets] || []
+      @external_assets = external_assets.map{|a| Gutenberg::Asset.new(a)}
 
       @images = []
       @stylesheets = []
       @scripts = []
 
-      @assets.each do |a|
+      @assets.dup.concat(@external_assets).each do |a|
         case a.type
         when :image
           @images << a

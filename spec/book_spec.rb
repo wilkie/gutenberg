@@ -23,8 +23,13 @@ describe Gutenberg::Book do
   end
 
   it "can be created with style" do
-    Gutenberg::Style.expects(:new).with("really_pretty").returns("foo")
+    Gutenberg::Style.expects(:new).with("really_pretty", anything).returns("foo")
     Gutenberg::Book.new({:style => "really_pretty"}).style.must_equal("foo")
+  end
+
+  it "can be created with style config" do
+    Gutenberg::Style.expects(:new).with("basic", has_entry(:yaml, "foo_config")).returns("foo")
+    Gutenberg::Book.new({:style_config => "foo_config"})
   end
 
   it "can be created with a table of contents flag" do
@@ -48,7 +53,13 @@ describe Gutenberg::Book do
 
   it "style can be pulled from yaml" do
     YAML.stubs(:load_file).returns({"style" => "pretty"})
-    Gutenberg::Style.expects(:new).with("pretty").returns("foo")
+    Gutenberg::Style.expects(:new).with("pretty", anything).returns("foo")
+    Gutenberg::Book.new({:yaml => 'test.yaml'}).style.must_equal("foo")
+  end
+
+  it "style config file can be pulled from yaml" do
+    YAML.stubs(:load_file).returns({"style-config" => "foo_config"})
+    Gutenberg::Style.expects(:new).with("basic", has_entry(:yaml, "foo_config")).returns("foo")
     Gutenberg::Book.new({:yaml => 'test.yaml'}).style.must_equal("foo")
   end
 
@@ -83,8 +94,13 @@ describe Gutenberg::Book do
   end
 
   it "has a reasonable default style" do
-    Gutenberg::Style.expects(:new).with("basic").returns("foo")
+    Gutenberg::Style.expects(:new).with("basic", anything).returns("foo")
     Gutenberg::Book.new.style.must_equal("foo")
+  end
+
+  it "has a reasonable default style config file" do
+    Gutenberg::Style.expects(:new).with("basic", has_entry(:yaml, "style.yml"))
+    Gutenberg::Book.new
   end
 
   it "has a default of false for toc" do
@@ -115,8 +131,14 @@ describe Gutenberg::Book do
 
   it "has a reasonable default style when not specified in yaml" do
     YAML.stubs(:load_file).returns({"title" => "foo"})
-    Gutenberg::Style.expects(:new).with("basic").returns("foo")
+    Gutenberg::Style.expects(:new).with("basic", anything).returns("foo")
     Gutenberg::Book.new({:yaml => "test.yaml"}).style.must_equal("foo")
+  end
+
+  it "has a reasonable default style config when not specified in yaml" do
+    YAML.stubs(:load_file).returns({"title" => "foo"})
+    Gutenberg::Style.expects(:new).with("basic", has_entry(:yaml, "style.yml"))
+    Gutenberg::Book.new({:yaml => "test.yaml"})
   end
 
   it "has a default of false for toc when not specified in the yaml" do
@@ -151,8 +173,14 @@ describe Gutenberg::Book do
 
   it "can override the style that is specified in yaml" do
     YAML.stubs(:load_file).returns({"style" => "moo"})
-    Gutenberg::Style.expects(:new).with("bar").returns("foo")
+    Gutenberg::Style.expects(:new).with("bar", anything).returns("foo")
     Gutenberg::Book.new({:yaml => "test.yaml", :style => "bar"}).style.must_equal("foo")
+  end
+
+  it "can override the style config that is specified in yaml" do
+    YAML.stubs(:load_file).returns({"style-config" => "moo_config"})
+    Gutenberg::Style.expects(:new).with("bar", has_entry(:yaml, "bar_config"))
+    Gutenberg::Book.new({:yaml => "test.yaml", :style => "bar", :style_config => "bar_config"})
   end
 
   it "can override the toc setting that is specified in yaml" do

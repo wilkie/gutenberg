@@ -16,6 +16,11 @@ module Gutenberg
     # :stylesheet = Stylesheet
     attr_reader :type
 
+    # Whether or not this asset is style supplied.
+    def style_supplied?
+      @style_supplied
+    end
+
     # Whether or not this asset should have attribution.
     def attribute?
       @attribution
@@ -38,15 +43,26 @@ module Gutenberg
       "#{File.dirname(__FILE__)}/assets"
     end
 
-    # Creates a reference to an asset given a path.
-    def initialize(path, check_path = nil)
+    # Creates a reference to an asset given a path. When this is an asset
+    # supplied by a style, give the style object.
+    def initialize(path, style = nil)
+      @style_supplied = !style.nil?
+
       # Check both local path and gem path
-      if File.exists?(path)
+      if @style_supplied
+        check_path = style.path
+        if File.exists?("#{Asset.path}/#{path}")
+          # Found the asset at the gem's shared asset path
+          @path = "#{Asset.path}/#{path}"
+        elsif (not check_path.nil?) and File.exists?("#{check_path}/#{path}")
+          # Found the asset off of the given path (a style path)
+          @path = "#{check_path}/#{path}"
+        else
+          raise Errno::ENOENT
+        end
+      elsif File.exists?(path)
+        # Found the asset at the given path
         @path = File.expand_path(path)
-      elsif File.exists?("#{Asset.path}/#{path}")
-        @path = "#{Asset.path}/#{path}"
-      elsif (not check_path.nil?) and File.exists?("#{check_path}/#{path}")
-        @path = "#{check_path}/#{path}"
       else
         raise Errno::ENOENT
       end
@@ -87,7 +103,7 @@ module Gutenberg
     # Yields the asset path from the given path.
     def path_from(from)
       subpath = File.basename @path.chomp(File.basename(@path))
-      from = "#{from}/" if from && !from.end_with?("/")
+      from = "#{from}/" if from && !from.empty? && !from.end_with?("/")
       "#{from}#{subpath}/#{File.basename(@path)}"
     end
 

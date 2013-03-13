@@ -10,6 +10,41 @@ describe Gutenberg::Style do
       @asset.stubs(:type).returns(:image)
     end
 
+    describe "when local style config is provided" do
+      it "should load external assets" do
+        YAML.stubs(:load_file).with("style.yml").returns({"assets"=>["foo", "bar"]})
+        Gutenberg::Asset.stubs(:new).returns(@asset)
+        Gutenberg::Style.new("foo", :yaml => "style.yml").external_assets.length.must_equal 2
+      end
+
+      it "should load assets as not style supplied" do
+        YAML.stubs(:load_file).with("style.yml").returns({"assets"=>["foo", "bar"]})
+        Gutenberg::Asset.expects(:new).with(anything).returns(@asset).twice
+        Gutenberg::Style.new("foo", :yaml => "style.yml")
+      end
+
+      it "should add images to images property" do
+        YAML.stubs(:load_file).with("style.yml").returns({"assets"=>["foo", "bar"]})
+        @asset.stubs(:type).returns(:image)
+        Gutenberg::Asset.stubs(:new).with(anything).returns(@asset).twice
+        Gutenberg::Style.new("foo", :yaml => "style.yml").images.must_include @asset
+      end
+
+      it "should add stylesheets to stylesheets property" do
+        YAML.stubs(:load_file).with("style.yml").returns({"assets"=>["foo", "bar"]})
+        @asset.stubs(:type).returns(:stylesheet)
+        Gutenberg::Asset.stubs(:new).with(anything).returns(@asset).twice
+        Gutenberg::Style.new("foo", :yaml => "style.yml").stylesheets.must_include @asset
+      end
+
+      it "should add scripts to scripts property" do
+        YAML.stubs(:load_file).with("style.yml").returns({"assets"=>["foo", "bar"]})
+        @asset.stubs(:type).returns(:script)
+        Gutenberg::Asset.stubs(:new).with(anything).returns(@asset).twice
+        Gutenberg::Style.new("foo", :yaml => "style.yml").scripts.must_include @asset
+      end
+    end
+
     it "should determine the path to the style" do
       Gutenberg::Style.new("foo").path.must_match /\/styles\/foo$/
     end
@@ -182,14 +217,16 @@ describe Gutenberg::Style do
       Gutenberg::Style.new("foo").name.must_equal "foo"
     end
 
-    it "should pass the style path to Asset" do
+    it "should pass the style to Asset" do
       File.stubs(:exists?).with(regexp_matches(/\.yml$/)).returns(false)
+
       asset1 = mock('asset')
       asset1.stubs(:type).returns(:image)
       asset2 = mock('asset')
       asset2.stubs(:type).returns(:image)
-      Gutenberg::Asset.expects(:new).with("moo", regexp_matches(/styles\/foo$/)).returns(asset1)
-      Gutenberg::Asset.expects(:new).with("boo", regexp_matches(/styles\/foo$/)).returns(asset2)
+
+      Gutenberg::Asset.expects(:new).with("moo", instance_of(Gutenberg::Style)).returns(asset1)
+      Gutenberg::Asset.expects(:new).with("boo", instance_of(Gutenberg::Style)).returns(asset2)
       Gutenberg::Style.new("foo", :assets => ["moo", "boo"]).assets.must_equal [asset1, asset2]
     end
   end
@@ -247,9 +284,9 @@ describe Gutenberg::Style do
       asset2.stubs(:type).returns(:stylesheet)
       asset3 = mock('asset')
       asset3.stubs(:type).returns(:stylesheet)
-      Gutenberg::Asset.stubs(:new).with("foo", anything).returns(asset1)
-      Gutenberg::Asset.stubs(:new).with("bar", anything).returns(asset2)
-      Gutenberg::Asset.stubs(:new).with("baz", anything).returns(asset3)
+      Gutenberg::Asset.stubs(:new).with("foo", anything, anything).returns(asset1)
+      Gutenberg::Asset.stubs(:new).with("bar", anything, anything).returns(asset2)
+      Gutenberg::Asset.stubs(:new).with("baz", anything, anything).returns(asset3)
       Gutenberg::Style.new("foo").stylesheets.must_equal [asset2, asset3]
     end
   end
