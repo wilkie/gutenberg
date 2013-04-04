@@ -7,25 +7,30 @@ strong {
 div#cover {
   text-align: center;
 }
-div#cover img {
+div#cover .page-content img {
   vertical-align:middle;
 }
 div.page {
-  width: 600px;
-  height: 800px;
-  padding: 10px;
-  background-color: white;
-  color: black;
-  margin-bottom: 10px;
   margin-left: auto;
   margin-right: auto;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+}
+div.page .page-content {
+  padding: 10px;
+  background-color: white;
   position: relative;
+  color: black;
+  margin-bottom: 10px;
   border: 1px solid black;
 }
-div.page div.toc:last-child {
+div.page .page-content div.toc:last-child {
   margin-bottom: 20px;
 }
-div.page div.footer {
+div.page .page-content div.footer {
   text-align: center;
   width: 100%;
   margin: 0;
@@ -59,7 +64,7 @@ h3 {
   font-size: 1.5em;
   color: #2426CF;
 }
-.page div.toc:first-child {
+.page .page-content div.toc:first-child {
   margin-top: 40px;
 }
 div.toc {
@@ -72,7 +77,7 @@ div.toc ul li:last-child {
   margin-bottom: 10px;
 }
 
-body > p, .page > p {
+body > p, .page .page-content > p {
   font-size: 16px;
   font-weight: normal;
   font-style: normal;
@@ -85,14 +90,14 @@ body > p, .page > p {
   hyphens: manual;
   font-family: "Oxygen", sans-serif;
 }
-body.firefox .page > p {
+body.firefox .page .page-content > p {
   font-size: 14.75px;
 }
-.page > p.split-next {
+.page .page-content > p.split-next {
   text-indent: 0;
 }
 
-.page > p.split:after {
+.page .page-content > p.split:after {
   content: "";
   line-height: 0;
   display: inline-block;
