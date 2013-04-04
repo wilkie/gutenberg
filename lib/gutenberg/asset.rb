@@ -58,6 +58,7 @@ module Gutenberg
           # Found the asset off of the given path (a style path)
           @path = "#{check_path}/#{path}"
         else
+          puts path
           raise Errno::ENOENT
         end
       elsif File.exists?(path)
