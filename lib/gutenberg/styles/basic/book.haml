@@ -1,7 +1,8 @@
 #cover.page
-  .page-content
-    - if book.cover
-      %img{:src => book.cover, :title => book.title}
+  .extent
+    .content
+      - if book.cover
+        %img{:src => book.cover, :title => book.title}
 
 - book.prefaces.each do |p|
   !=p.html
