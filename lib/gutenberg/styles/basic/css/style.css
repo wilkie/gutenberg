@@ -7,42 +7,63 @@ strong {
 div#cover {
   text-align: center;
 }
-div#cover .page-content img {
+div#cover .extent .content img {
   vertical-align:middle;
 }
 div.page {
   margin-left: auto;
   margin-right: auto;
-  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   overflow: hidden;
-  border-bottom: 1px solid #888;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  border-bottom: 1px solid #bbb;
+
+  box-shadow: 0px 5px 2px -3px #ddd;
 }
-div.page .page-content {
-  padding: 10px;
-  background-color: white;
+div.page .extent {
   position: relative;
+
   color: black;
-  margin-bottom: 10px;
-  border: 1px solid black;
+  background-color: white;
 }
-div.page .page-content div.toc:last-child {
+div.page .extent .content {
+  padding: 15px;
+  padding-bottom: 20px;
+}
+div.page .extent .content div.toc:last-child {
   margin-bottom: 20px;
 }
-div.page .page-content div.footer {
+div.page .extent .footer {
   text-align: center;
   width: 100%;
   margin: 0;
 
   position:absolute;
-  bottom: 10px;
+  bottom: 15px;
+}
+#overlay {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  background-image: url('../images/noise_black.png');
+}
+#overlay .page {
+  position: absolute;
+  top: 0;
+  height: 100%;
+}
+#overlay .page .extent {
+  height: 100%;
 }
 body {
-  background-image: url('../images/noise_black.png');
+  background-color: white;
   color: black;
-  margin: 10px
+  padding: 10px;
   text-align: center;
 }
 h1 {
@@ -65,7 +86,7 @@ h3 {
   font-size: 1.5em;
   color: #2426CF;
 }
-.page .page-content div.toc:first-child {
+.page .extent .content div.toc:first-child {
   margin-top: 40px;
 }
 div.toc {
@@ -78,7 +99,7 @@ div.toc ul li:last-child {
   margin-bottom: 10px;
 }
 
-body > p, .page .page-content > p {
+body > p, .page .extent .content > p {
   font-size: 16px;
   font-weight: normal;
   font-style: normal;
@@ -91,14 +112,14 @@ body > p, .page .page-content > p {
   hyphens: manual;
   font-family: "Oxygen", sans-serif;
 }
-body.firefox .page .page-content > p {
+body.firefox .page .extent .content > p {
   font-size: 14.75px;
 }
-.page .page-content > p.split-next {
+.page .extent .content > p.split-next {
   text-indent: 0;
 }
 
-.page .page-content > p.split:after {
+.page .extent .content > p.split:after {
   content: "";
   line-height: 0;
   display: inline-block;
