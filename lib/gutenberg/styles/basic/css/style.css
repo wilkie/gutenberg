@@ -18,6 +18,7 @@ div.page {
   left: 0;
   right: 0;
   overflow: hidden;
+  border-bottom: 1px solid #888;
 }
 div.page .page-content {
   padding: 10px;
